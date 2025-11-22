@@ -1,0 +1,7 @@
+.antlr/
+__pycache__/
+*.pyc
+venv/
+env/
+*.interp
+*.tokens
