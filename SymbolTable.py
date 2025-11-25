@@ -1,41 +1,31 @@
 class Symbol:
-    """
-    Representa um símbolo na tabela de símbolos (variável, constante, etc.).
-    """
+    """Representa um identificador (variável, constante, etc) e seus metadados."""
     def __init__(self, name, type_name, category):
         self.name = name
         self.type = type_name
         self.category = category  # 'var', 'const', 'function', 'param'
 
 class FunctionSymbol(Symbol):
-    """
-    Representa uma função, armazenando também seus parâmetros.
-    """
+    """Representa uma função e sua lista de parâmetros."""
     def __init__(self, name, return_type, params):
         super().__init__(name, return_type, 'function')
         self.params = params  # Lista de objetos Symbol para os parâmetros
 
 class SymbolTable:
-    """
-    Gerencia os escopos e símbolos do programa.
-    Funciona como uma pilha de escopos (dicionários).
-    """
+    """Gerencia escopos aninhados usando uma pilha de dicionários."""
     def __init__(self):
         self.scopes = [{}]  # Pilha de escopos, inicia com o escopo global
 
     def enter_scope(self):
-        """Cria um novo escopo e o empilha."""
+        """Empilha um novo escopo vazio."""
         self.scopes.append({})
 
     def exit_scope(self):
-        """Remove o escopo atual (topo da pilha)."""
+        """Desempilha o escopo atual."""
         self.scopes.pop()
 
     def define(self, symbol):
-        """
-        Define um símbolo no escopo atual.
-        Retorna False se o símbolo já existir no escopo atual.
-        """
+        """Registra um símbolo no escopo atual. Retorna False se já existir."""
         scope = self.scopes[-1]
         if symbol.name in scope:
             return False
@@ -43,10 +33,7 @@ class SymbolTable:
         return True
 
     def resolve(self, name):
-        """
-        Busca um símbolo pelo nome, começando do escopo atual até o global.
-        Retorna None se não encontrar.
-        """
+        """Busca um símbolo do escopo atual até o global."""
         for scope in reversed(self.scopes):
             if name in scope:
                 return scope[name]

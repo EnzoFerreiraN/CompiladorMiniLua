@@ -4,25 +4,21 @@ from dist.MiniLuaParser import MiniLuaParser
 from SymbolTable import SymbolTable, Symbol, FunctionSymbol
 
 class SemanticAnalyzer(MiniLuaVisitor):
-    """
-    Realiza a análise semântica percorrendo a árvore sintática (Visitor).
-    Verifica tipos, escopos, declarações e regras da linguagem MiniLua.
-    """
+    """Percorre a AST validando tipos, escopo e regras semânticas."""
+    
     def __init__(self):
         self.symbol_table = SymbolTable()
-        self.current_function = None # Rastreia a função atual para verificar retornos
+        self.current_function = None # Função sendo analisada (para validar retornos)
+        self.has_return = False # Rastreia se houve retorno na função atual
 
     def error(self, msg, ctx):
-        """Reporta erro semântico e encerra a execução."""
+        """Exibe erro semântico com linha e aborta."""
         line = ctx.start.line
         print(f"Erro semântico na linha {line}: {msg}")
         sys.exit(1)
 
     def check_type_compatibility(self, target, source):
-        """
-        Verifica se o tipo 'source' é compatível com o tipo 'target'.
-        Permite coerção de integer para number.
-        """
+        """Verifica compatibilidade de tipos, permitindo coerção int->float."""
         if target == source:
             return True
         if target == 'number' and source == 'integer':
@@ -32,17 +28,17 @@ class SemanticAnalyzer(MiniLuaVisitor):
         return False
 
     def visitProgram(self, ctx):
-        # Define funções nativas (built-ins) no escopo global
-        self.symbol_table.define(FunctionSymbol("print", "void", [])) # Print aceita argumentos variáveis na prática
+        # Registra funções nativas (print, input, len, etc)
+        self.symbol_table.define(FunctionSymbol("print", "void", []))
         self.symbol_table.define(FunctionSymbol("inputNumber", "number", []))
         self.symbol_table.define(FunctionSymbol("inputString", "string", []))
         self.symbol_table.define(FunctionSymbol("len", "integer", [Symbol("s", "string", "param")]))
-        self.symbol_table.define(FunctionSymbol("arrayLength", "integer", [])) # Special handling for generic array param
+        self.symbol_table.define(FunctionSymbol("arrayLength", "integer", []))
         
         return self.visitChildren(ctx)
 
     def visitFunction_decl(self, ctx):
-        # Coleta informações da função
+        # Registra função e valida corpo em novo escopo
         name = ctx.IDENTIFIER().getText()
         return_type = self.visit(ctx.return_type())
         
@@ -59,7 +55,8 @@ class SemanticAnalyzer(MiniLuaVisitor):
             self.error(f"Função '{name}' já declarada.", ctx)
 
         self.current_function = func_symbol
-        self.symbol_table.enter_scope() # Novo escopo para parâmetros e corpo da função
+        self.has_return = False # Reseta flag de retorno
+        self.symbol_table.enter_scope()
         
         # Define parâmetros no escopo da função
         for param in params:
@@ -68,11 +65,15 @@ class SemanticAnalyzer(MiniLuaVisitor):
 
         self.visit(ctx.block())
         
+        if return_type != 'void' and not self.has_return:
+            self.error(f"Função '{name}' deve retornar um valor do tipo {return_type}.", ctx)
+
         self.symbol_table.exit_scope()
         self.current_function = None
         return None
 
     def visitMain_function(self, ctx):
+        # Registra e valida a função main
         name = "main"
         func_symbol = FunctionSymbol(name, "void", [])
         if not self.symbol_table.define(func_symbol):
@@ -86,6 +87,7 @@ class SemanticAnalyzer(MiniLuaVisitor):
         return None
 
     def visitVar_decl(self, ctx):
+        # Registra variável e valida tipo da inicialização
         name = ctx.IDENTIFIER().getText()
         type_name = self.visit(ctx.type_())
         
@@ -100,6 +102,7 @@ class SemanticAnalyzer(MiniLuaVisitor):
                 self.error(f"Tipo incompatível na inicialização de '{name}'. Esperado {type_name}, encontrado {expr_type}.", ctx)
 
     def visitConst_decl(self, ctx):
+        # Registra constante e valida tipo da inicialização
         name = ctx.IDENTIFIER().getText()
         type_name = self.visit(ctx.type_())
         
@@ -111,6 +114,7 @@ class SemanticAnalyzer(MiniLuaVisitor):
             self.error(f"Tipo incompatível na inicialização de '{name}'. Esperado {type_name}, encontrado {expr_type}.", ctx)
 
     def visitAssignment(self, ctx):
+        # Valida atribuição: existência, const-ness e tipos
         name = ctx.IDENTIFIER().getText()
         symbol = self.symbol_table.resolve(name)
         if not symbol:
@@ -137,7 +141,7 @@ class SemanticAnalyzer(MiniLuaVisitor):
                  self.error(f"Tipo incompatível na atribuição para '{name}'. Esperado {symbol.type}, encontrado {expr_type}.", ctx)
 
     def visitIf_stmt(self, ctx):
-        # Verifica se todas as condições são booleanas
+        # Valida se condições são booleanas
         for expr in ctx.expression():
             t = self.visit(expr)
             if t != 'boolean':
@@ -145,19 +149,20 @@ class SemanticAnalyzer(MiniLuaVisitor):
         self.visitChildren(ctx)
 
     def visitWhile_stmt(self, ctx):
+        # Valida condição booleana do loop
         t = self.visit(ctx.expression())
         if t != 'boolean':
             self.error(f"Condição do 'while' deve ser boolean. Encontrado {t}.", ctx)
         self.visit(ctx.block())
 
     def visitDo_stmt(self, ctx):
-        # Cria novo escopo para o bloco do...end
+        # Cria escopo para bloco do..end
         self.symbol_table.enter_scope()
         self.visit(ctx.block())
         self.symbol_table.exit_scope()
 
     def visitFor_stmt(self, ctx):
-        # for IDENTIFIER = expr, expr [, expr] do ...
+        # Cria escopo, define iterador e valida limites inteiros
         name = ctx.IDENTIFIER().getText()
         
         # Variável do laço for é local ao laço
@@ -179,9 +184,11 @@ class SemanticAnalyzer(MiniLuaVisitor):
         self.symbol_table.exit_scope()
 
     def visitReturn_stmt(self, ctx):
+        # Valida tipo de retorno contra a função atual
         if not self.current_function:
             self.error("Comando 'return' fora de função.", ctx)
             
+        self.has_return = True
         expected_type = self.current_function.type
         if ctx.expression():
             actual_type = self.visit(ctx.expression())
@@ -292,12 +299,7 @@ class SemanticAnalyzer(MiniLuaVisitor):
                 
                 return symbol.type[6:-1] # Retorna T de array<T>
             
-            elif ctx.LPAREN(): # Chamada de função (tratada em function_call, mas pode aparecer aqui dependendo da gramática)
-                # Na gramática atual, function_call é uma regra separada em atom.
-                # Se cair aqui com LPAREN, seria algo como IDENTIFIER LPAREN ... RPAREN que o parser jogou para cá?
-                # Na verdade, a regra atom tem: IDENTIFIER | function_call | ...
-                # function_call começa com IDENTIFIER. O parser resolve isso.
-                # Se entrou aqui apenas com IDENTIFIER, é variável.
+            elif ctx.LPAREN(): 
                 symbol = self.symbol_table.resolve(name)
                 if not symbol:
                     self.error(f"Identificador '{name}' não encontrado.", ctx)
