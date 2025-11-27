@@ -10,6 +10,7 @@ class SemanticAnalyzer(MiniLuaVisitor):
         self.symbol_table = SymbolTable()
         self.current_function = None # Função sendo analisada (para validar retornos)
         self.has_return = False # Rastreia se houve retorno na função atual
+        self.reserved_names = {'print', 'inputNumber', 'inputString', 'len', 'arrayLength'}
 
     def error(self, msg, ctx):
         """Exibe erro semântico com linha e aborta."""
@@ -40,12 +41,16 @@ class SemanticAnalyzer(MiniLuaVisitor):
     def visitFunction_decl(self, ctx):
         # Registra função e valida corpo em novo escopo
         name = ctx.IDENTIFIER().getText()
+        if name in self.reserved_names:
+            self.error(f"Nome '{name}' é reservado.", ctx)
         return_type = self.visit(ctx.return_type())
         
         params = []
         if ctx.param_list():
             for param_ctx in ctx.param_list().param():
                 p_name = param_ctx.IDENTIFIER().getText()
+                if p_name in self.reserved_names:
+                    self.error(f"Nome de parâmetro '{p_name}' é reservado.", ctx)
                 p_type = self.visit(param_ctx.type_())
                 params.append(Symbol(p_name, p_type, 'param'))
 
@@ -89,6 +94,8 @@ class SemanticAnalyzer(MiniLuaVisitor):
     def visitVar_decl(self, ctx):
         # Registra variável e valida tipo da inicialização
         name = ctx.IDENTIFIER().getText()
+        if name in self.reserved_names:
+            self.error(f"Nome de variável '{name}' é reservado.", ctx)
         type_name = self.visit(ctx.type_())
         
         # Verifica se variável já existe no escopo atual
@@ -104,6 +111,8 @@ class SemanticAnalyzer(MiniLuaVisitor):
     def visitConst_decl(self, ctx):
         # Registra constante e valida tipo da inicialização
         name = ctx.IDENTIFIER().getText()
+        if name in self.reserved_names:
+            self.error(f"Nome de constante '{name}' é reservado.", ctx)
         type_name = self.visit(ctx.type_())
         
         if not self.symbol_table.define(Symbol(name, type_name, 'const')):
@@ -141,19 +150,36 @@ class SemanticAnalyzer(MiniLuaVisitor):
                  self.error(f"Tipo incompatível na atribuição para '{name}'. Esperado {symbol.type}, encontrado {expr_type}.", ctx)
 
     def visitIf_stmt(self, ctx):
-        # Valida se condições são booleanas
-        for expr in ctx.expression():
+        # Para cada cláusula (if / elseif) valida a condição e cria um novo
+        # escopo apenas para o bloco associado. Se houver um else, cria
+        # escopo para o bloco else também.
+        exprs = list(ctx.expression())
+        blocks = list(ctx.block())
+
+        # Valida e visita blocos correspondentes às condições (if + elseif...)
+        for i, expr in enumerate(exprs):
             t = self.visit(expr)
             if t != 'boolean':
                 self.error(f"Condição do 'if/elseif' deve ser boolean. Encontrado {t}.", ctx)
-        self.visitChildren(ctx)
+            # bloco i corresponde à condição i
+            self.symbol_table.enter_scope()
+            self.visit(blocks[i])
+            self.symbol_table.exit_scope()
+
+        # Se existir um bloco extra, é o else
+        if len(blocks) > len(exprs):
+            self.symbol_table.enter_scope()
+            self.visit(blocks[-1])
+            self.symbol_table.exit_scope()
 
     def visitWhile_stmt(self, ctx):
-        # Valida condição booleana do loop
+        # Valida condição booleana do loop e cria escopo para o bloco do while
         t = self.visit(ctx.expression())
         if t != 'boolean':
             self.error(f"Condição do 'while' deve ser boolean. Encontrado {t}.", ctx)
+        self.symbol_table.enter_scope()
         self.visit(ctx.block())
+        self.symbol_table.exit_scope()
 
     def visitDo_stmt(self, ctx):
         # Cria escopo para bloco do..end

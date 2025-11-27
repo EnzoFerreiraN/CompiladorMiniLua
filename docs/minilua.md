@@ -360,10 +360,6 @@ Dependendo do projeto, podem ser consideradas nativas também:
 * `len(s : string) : integer` – retorna o tamanho da string `s`.
 * `arrayLength(a : array<T>) : integer` – retorna o tamanho do array `a`.
 
-Essas funções são opcionais e podem ser incluídas conforme a necessidade da implementação.
-
----
-
 ## 7. Sentenças de atribuição e controle (VI)
 
 ### 7.1. Atribuição simples
@@ -379,7 +375,8 @@ Sintaxe (informal):
 Regras semânticas:
 
 * O tipo da expressão à direita deve ser compatível com o tipo da variável à esquerda.
-* Coerções implícitas entre `integer` e `number` podem ser permitidas (a definir no projeto), mas **nenhuma coerção implícita** é realizada entre tipos numéricos e `string` ou `boolean`.
+* É permitida a coerção implícita de `integer` para `number`.
+* Não é permitida a coerção de `number` para `integer` (perda de precisão), nem entre tipos numéricos e `string` ou `boolean`.
 
 Exemplo:
 
@@ -414,7 +411,28 @@ Regras:
 * A expressão usada como índice deve ter tipo `integer`.
 * O tipo da expressão à direita deve coincidir com o tipo de elementos do array.
 
-### 7.3. Comando condicional `if`
+### 7.3. Bloco de escopo `do ... end`
+
+O comando `do` cria um novo escopo léxico explícito. Variáveis declaradas dentro deste bloco não são visíveis fora dele.
+
+Sintaxe (informal):
+
+```text
+<cmd_do> ::= "do" <bloco> "end"
+```
+
+Exemplo:
+
+```text
+local x : integer = 10;
+do
+  local x : integer = 20; -- Variável local ao bloco (sombreamento)
+  print(x); -- Imprime 20
+end
+print(x); -- Imprime 10
+```
+
+### 7.4. Comando condicional `if`
 
 O comando `if` permite seleção condicional de blocos de código.
 
@@ -441,7 +459,7 @@ end
 
 A expressão em `if` e `elseif` deve ter tipo `boolean`.
 
-### 7.4. Comando de repetição `while`
+### 7.5. Comando de repetição `while`
 
 O comando `while` executa um bloco enquanto uma condição booleana for verdadeira.
 
@@ -461,7 +479,7 @@ while i <= 10 do
 end
 ```
 
-### 7.5. Comando de repetição `for` numérico
+### 7.6. Comando de repetição `for` numérico
 
 MiniLua implementa um `for` numérico com variável de controle inteira.
 
@@ -489,7 +507,7 @@ end
 
 A variável de controle do `for` é considerada **local ao laço**.
 
-### 7.6. Comando `return`
+### 7.7. Comando `return`
 
 O comando `return` é permitido apenas dentro de funções.
 
@@ -503,7 +521,7 @@ Sintaxe (informal):
 * Em funções com tipo de retorno diferente de `void`, é obrigatório retornar um valor compatível com o tipo declarado.
 * Em funções `void`, o comando `return;` é opcional e não contém expressão.
 
-### 7.7. Estrutura geral de um programa MiniLua
+### 7.8. Estrutura geral de um programa MiniLua
 
 Um programa MiniLua é composto por:
 
