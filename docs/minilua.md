@@ -1,5 +1,11 @@
 # Especificação da Linguagem MiniLua
 
+# Membros do Grupo: 
+ANTÔNIO ENZO FERREIRA DO NASCIMENTO 
+RAFAEL NOGUEIRA LEAL REBELO 
+RAFAEL VAZ ROCHA
+
+
 ## 1. Introdução
 
 Este documento especifica a linguagem de programação **MiniLua**, uma versão simplificada inspirada na linguagem Lua, desenvolvida para fins didáticos na disciplina de Compiladores.
