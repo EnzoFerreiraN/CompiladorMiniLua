@@ -17,7 +17,7 @@ function void main()
     end
     
     local i: integer;
-    for i = 10, 0, -2 do
+    for i = 1, 10 do
         print("Countdown:", i);
     end
 end

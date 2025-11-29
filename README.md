@@ -1,12 +1,21 @@
-# Compilador MiniLua - Front-end
+# Compilador MiniLua
 
-Este projeto consiste no desenvolvimento do front-end de um compilador para a linguagem **MiniLua**, um subconjunto simplificado da linguagem Lua. O projeto foi desenvolvido como parte da disciplina de Compiladores (2025.2) da UFPI.
+Este projeto consiste no desenvolvimento de um compilador completo (Front-end e Back-end) para a linguagem **MiniLua**, um subconjunto simplificado da linguagem Lua. O compilador traduz código MiniLua para **LLVM IR** e, em seguida, gera um executável nativo. O projeto foi desenvolvido como parte da disciplina de Compiladores (2025.2) da UFPI.
 
 ## 1. Pré-requisitos e Instalação
 
-Para executar o compilador, é necessário ter o **Python 3.12+** instalado.
+### Software Necessário
 
-As dependências do projeto estão listadas no arquivo `requirements.txt`. Para instalá-las, execute o seguinte comando no terminal:
+1.  **Python 3.12+**
+2.  **LLVM (Clang)**: Necessário para compilar o código intermediário.
+    *   Baixe e instale o LLVM (certifique-se de adicionar ao PATH): [LLVM Releases](https://github.com/llvm/llvm-project/releases)
+3.  **MinGW (GCC)** (Recomendado para Windows):
+    *   Necessário para linkagem eficiente e bibliotecas padrão.
+    *   Recomendado: [MinGW-w64](https://www.mingw-w64.org/) ou via gerenciadores como Chocolatey (`choco install mingw`).
+
+### Dependências Python
+
+As dependências do projeto estão listadas no arquivo `requirements.txt`. Para instalá-las, execute:
 
 ```bash
 pip install -r requirements.txt
@@ -14,7 +23,8 @@ pip install -r requirements.txt
 
 As principais dependências são:
 *   `antlr4-python3-runtime`: Runtime do ANTLR4 para Python.
-*   `antlr4-tools`: Ferramentas para geração do parser (caso necessário regenerar).
+*   `llvmlite`: Binding Python para geração de LLVM IR.
+*   `antlr4-tools`: Ferramentas para geração do parser.
 
 ## 2. Execução
 
@@ -38,7 +48,18 @@ python main.py tests/correct/factorial.lua
 
 **Saída esperada:**
 ```text
+Gerando código intermediário (LLVM IR)...
+Código intermediário gerado em '...\codigos_gerados\llvm\factorial.ll'.
+Compilando '...\codigos_gerados\llvm\factorial.ll'...
+Compilando runtime...
+Tentando linkar com gcc.EXE...
+Executável gerado com sucesso: ...\codigos_gerados\exe\factorial.exe
 Compilação realizada com sucesso.
+```
+
+O executável gerado pode ser rodado diretamente:
+```bash
+.\codigos_gerados\exe\factorial.exe
 ```
 
 #### Caso de Erro (Semântico)
@@ -85,17 +106,32 @@ Erro sintático na linha 6: missing 'end' at '<EOF>'
 
 ## 3. Estrutura do Projeto
 
-*   `main.py`: Ponto de entrada do compilador.
+*   `main.py`: Ponto de entrada. Gerencia o pipeline (Lexer -> Parser -> Semântico -> CodeGen -> Compilação).
+*   `CodeGenerator.py`: Visitor que percorre a AST e gera código **LLVM IR** usando `llvmlite`.
+*   `runtime.c`: Biblioteca de tempo de execução em C (gerenciamento de arrays dinâmicos, I/O).
 *   `MiniLua.g4`: Arquivo de gramática do ANTLR4.
-*   `SemanticAnalyzer.py`: Implementação do analisador semântico (Visitor).
-*   `SymbolTable.py`: Implementação da tabela de símbolos.
-*   `dist/`: Contém os arquivos gerados automaticamente pelo ANTLR4 (Lexer, Parser, Visitor).
-*   `tests/`: Contém casos de teste.
-    *   `correct/`: Testes com código válido (fatorial, arrays, controle de fluxo).
-    *   `errors/`: Testes projetados para falhar (erros léxicos, sintáticos e semânticos).
-*   `docs/`: Documentação do projeto.
+*   `SemanticAnalyzer.py`: Analisador semântico (Visitor).
+*   `SymbolTable.py`: Tabela de símbolos.
+*   `codigos_gerados/`: Pasta de saída.
+    *   `llvm/`: Arquivos `.ll` (código intermediário).
+    *   `exe/`: Executáveis finais.
+*   `dist/`: Arquivos gerados pelo ANTLR4.
+*   `tests/`: Casos de teste.
+*   `docs/`: Documentação.
 
-## 4. Atualizações da Especificação
+## 4. Implementação do Back-end
+
+O back-end foi implementado utilizando **LLVM IR** como representação intermediária.
+
+*   **Geração de Código**: O `CodeGenerator.py` traduz as construções da linguagem (loops, condicionais, funções, expressões) para instruções LLVM.
+*   **Runtime em C**: Arrays dinâmicos e funções de sistema são gerenciados por um runtime escrito em C (`runtime.c`), que é compilado e linkado junto com o código gerado.
+*   **Pipeline de Build**:
+    1.  Geração do arquivo `.ll` (LLVM IR).
+    2.  Compilação do `.ll` para objeto `.o` usando `clang`.
+    3.  Compilação do `runtime.c` para `runtime.o`.
+    4.  Linkagem dos objetos para gerar o `.exe` final (usando `gcc` ou `clang`).
+
+## 5. Atualizações da Especificação
 
 Durante o desenvolvimento do front-end, algumas definições foram refinadas em relação à especificação inicial:
 

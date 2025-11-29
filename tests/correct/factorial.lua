@@ -7,7 +7,7 @@ function integer factorial(n: integer)
 end
 
 function void main()
-    local num: integer = 5;
+    local num: integer = 4;
     local result: integer;
     result = factorial(num);
     print("Fatorial de", num, "eh", result);
