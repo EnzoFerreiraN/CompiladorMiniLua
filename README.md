@@ -2,6 +2,8 @@
 
 Este projeto consiste no desenvolvimento de um compilador completo (Front-end e Back-end) para a linguagem **MiniLua**, um subconjunto simplificado da linguagem Lua. O compilador traduz código MiniLua para **LLVM IR** e, em seguida, gera um executável nativo. O projeto foi desenvolvido como parte da disciplina de Compiladores (2025.2) da UFPI.
 
+> **Nota:** Este compilador foi desenvolvido para funcionar exclusivamente em ambiente **Windows**.
+
 ## 1. Pré-requisitos e Instalação
 
 ### Software Necessário
@@ -9,7 +11,7 @@ Este projeto consiste no desenvolvimento de um compilador completo (Front-end e 
 1.  **Python 3.12+**
 2.  **LLVM (Clang)**: Necessário para compilar o código intermediário.
     *   Baixe e instale o LLVM (certifique-se de adicionar ao PATH): [LLVM Releases](https://github.com/llvm/llvm-project/releases)
-3.  **MinGW (GCC)** (Recomendado para Windows):
+3.  **MinGW (GCC)**:
     *   Necessário para linkagem eficiente e bibliotecas padrão.
     *   Recomendado: [MinGW-w64](https://www.mingw-w64.org/) ou via gerenciadores como Chocolatey (`choco install mingw`).
 
