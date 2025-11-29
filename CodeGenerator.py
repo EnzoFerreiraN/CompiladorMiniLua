@@ -69,6 +69,10 @@ class CodeGenerator(MiniLuaVisitor):
         get_data_ty = ir.FunctionType(voidptr_ty, [voidptr_ty])
         self.minilua_get_data_ptr = ir.Function(self.module, get_data_ty, name="minilua_get_data_ptr")
 
+        # void minilua_print_number(double n)
+        print_num_ty = ir.FunctionType(ir.VoidType(), [ir.DoubleType()])
+        self.minilua_print_number = ir.Function(self.module, print_num_ty, name="minilua_print_number")
+
     def _get_llvm_type(self, type_ctx):
         if type_ctx.TYPE_NUMBER() or type_ctx.TYPE_INTEGER():
             return ir.DoubleType()
@@ -441,11 +445,23 @@ class CodeGenerator(MiniLuaVisitor):
                     args.append(val)
             
             for i, val in enumerate(args):
-                # Determina formato
+                if val.type == ir.DoubleType():
+                    self.builder.call(self.minilua_print_number, [val])
+                    if i < len(args) - 1:
+                        # Imprime espaço
+                        sp = " \0"
+                        c_sp = ir.Constant(ir.ArrayType(ir.IntType(8), len(sp)), bytearray(sp.encode("utf8")))
+                        global_sp = ir.GlobalVariable(self.module, c_sp.type, name=f"sp_{self.module.get_unique_name()}")
+                        global_sp.linkage = 'internal'
+                        global_sp.global_constant = True
+                        global_sp.initializer = c_sp
+                        sp_arg = self.builder.bitcast(global_sp, ir.IntType(8).as_pointer())
+                        self.builder.call(self.printf, [sp_arg])
+                    continue
+
+                # Determina formato para outros tipos
                 if isinstance(val.type, ir.PointerType) and val.type.pointee == ir.IntType(8):
                     fmt = "%s"
-                elif val.type == ir.DoubleType():
-                    fmt = "%.2f" # Usa %.2f para saída mais limpa
                 elif val.type == ir.IntType(32):
                     fmt = "%d"
                 elif val.type == ir.IntType(1):

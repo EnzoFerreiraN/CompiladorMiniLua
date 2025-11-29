@@ -28,6 +28,8 @@ declare i32 @"minilua_array_length"(i8* %".1")
 
 declare i8* @"minilua_get_data_ptr"(i8* %".1")
 
+declare void @"minilua_print_number"(double %".1")
+
 define i32 @"main"()
 {
 entry:
@@ -48,20 +50,19 @@ entry:
   %"n.1" = load double, double* %"n"
   %".13" = bitcast [4 x i8]* @"fmt_.6" to i8*
   %".14" = call i32 (i8*, ...) @"printf"(i8* %".13", i8* %".12")
-  %".15" = bitcast [5 x i8]* @"fmt_.7" to i8*
-  %".16" = call i32 (i8*, ...) @"printf"(i8* %".15", double %"n.1")
-  %".17" = bitcast [2 x i8]* @"nl_.8" to i8*
-  %".18" = call i32 (i8*, ...) @"printf"(i8* %".17")
+  call void @"minilua_print_number"(double %"n.1")
+  %".16" = bitcast [2 x i8]* @"nl_.7" to i8*
+  %".17" = call i32 (i8*, ...) @"printf"(i8* %".16")
   %"b" = alloca i1
   store i1 0, i1* %"b"
-  %".20" = bitcast [23 x i8]* @"str_.9" to i8*
+  %".19" = bitcast [23 x i8]* @"str_.8" to i8*
   %"b.1" = load i1, i1* %"b"
-  %".21" = bitcast [4 x i8]* @"fmt_.10" to i8*
-  %".22" = call i32 (i8*, ...) @"printf"(i8* %".21", i8* %".20")
-  %".23" = bitcast [3 x i8]* @"fmt_.11" to i8*
-  %".24" = call i32 (i8*, ...) @"printf"(i8* %".23", i1 %"b.1")
-  %".25" = bitcast [2 x i8]* @"nl_.12" to i8*
-  %".26" = call i32 (i8*, ...) @"printf"(i8* %".25")
+  %".20" = bitcast [4 x i8]* @"fmt_.9" to i8*
+  %".21" = call i32 (i8*, ...) @"printf"(i8* %".20", i8* %".19")
+  %".22" = bitcast [3 x i8]* @"fmt_.10" to i8*
+  %".23" = call i32 (i8*, ...) @"printf"(i8* %".22", i1 %"b.1")
+  %".24" = bitcast [2 x i8]* @"nl_.11" to i8*
+  %".25" = call i32 (i8*, ...) @"printf"(i8* %".24")
   ret i32 0
 }
 
@@ -72,9 +73,8 @@ entry:
 @"nl_.4" = internal constant [2 x i8] c"\0a\00"
 @"str_.5" = internal constant [22 x i8] c"Uninitialized number:\00"
 @"fmt_.6" = internal constant [4 x i8] c"%s \00"
-@"fmt_.7" = internal constant [5 x i8] c"%.2f\00"
-@"nl_.8" = internal constant [2 x i8] c"\0a\00"
-@"str_.9" = internal constant [23 x i8] c"Uninitialized boolean:\00"
-@"fmt_.10" = internal constant [4 x i8] c"%s \00"
-@"fmt_.11" = internal constant [3 x i8] c"%d\00"
-@"nl_.12" = internal constant [2 x i8] c"\0a\00"
+@"nl_.7" = internal constant [2 x i8] c"\0a\00"
+@"str_.8" = internal constant [23 x i8] c"Uninitialized boolean:\00"
+@"fmt_.9" = internal constant [4 x i8] c"%s \00"
+@"fmt_.10" = internal constant [3 x i8] c"%d\00"
+@"nl_.11" = internal constant [2 x i8] c"\0a\00"

@@ -66,3 +66,11 @@ void* minilua_get_data_ptr(DynamicArray* arr) {
     if (!arr) return NULL;
     return arr->data;
 }
+
+void minilua_print_number(double n) {
+    if (n == (long long)n) {
+        printf("%lld", (long long)n);
+    } else {
+        printf("%.2f", n);
+    }
+}

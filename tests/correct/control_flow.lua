@@ -1,5 +1,5 @@
 function void main()
-    local x: integer = 10;
+    local x: integer = 30;
     local y: integer = 20;
     
     if x > y then

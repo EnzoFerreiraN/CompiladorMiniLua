@@ -18,11 +18,23 @@ declare i8* @"strcpy"(i8* %".1", i8* %".2")
 
 declare i8* @"strcat"(i8* %".1", i8* %".2")
 
+declare i32 @"scanf"(i8* %".1", ...)
+
+declare i8* @"minilua_new_array"(i32 %".1")
+
+declare void @"minilua_ensure_capacity"(i8* %".1", i32 %".2")
+
+declare i32 @"minilua_array_length"(i8* %".1")
+
+declare i8* @"minilua_get_data_ptr"(i8* %".1")
+
+declare void @"minilua_print_number"(double %".1")
+
 define i32 @"main"()
 {
 entry:
   %"x" = alloca double
-  store double 0x4024000000000000, double* %"x"
+  store double 0x403e000000000000, double* %"x"
   %"y" = alloca double
   store double 0x4034000000000000, double* %"y"
   %"x.1" = load double, double* %"x"
@@ -68,10 +80,9 @@ while_body:
   %"count.2" = load double, double* %"count"
   %".28" = bitcast [4 x i8]* @"fmt_.11" to i8*
   %".29" = call i32 (i8*, ...) @"printf"(i8* %".28", i8* %".27")
-  %".30" = bitcast [5 x i8]* @"fmt_.12" to i8*
-  %".31" = call i32 (i8*, ...) @"printf"(i8* %".30", double %"count.2")
-  %".32" = bitcast [2 x i8]* @"nl_.13" to i8*
-  %".33" = call i32 (i8*, ...) @"printf"(i8* %".32")
+  call void @"minilua_print_number"(double %"count.2")
+  %".31" = bitcast [2 x i8]* @"nl_.12" to i8*
+  %".32" = call i32 (i8*, ...) @"printf"(i8* %".31")
   %"count.3" = load double, double* %"count"
   %"addtmp" = fadd double %"count.3", 0x3ff0000000000000
   store double %"addtmp", double* %"count"
@@ -90,14 +101,13 @@ for_cond:
   %"forcond" = select  i1 %"step_ge_0", i1 %"cond_le", i1 %"cond_ge"
   br i1 %"forcond", label %"for_body", label %"for_merge"
 for_body:
-  %".40" = bitcast [11 x i8]* @"str_.14" to i8*
+  %".39" = bitcast [11 x i8]* @"str_.13" to i8*
   %"i.3" = load double, double* %"i.1"
-  %".41" = bitcast [4 x i8]* @"fmt_.15" to i8*
-  %".42" = call i32 (i8*, ...) @"printf"(i8* %".41", i8* %".40")
-  %".43" = bitcast [5 x i8]* @"fmt_.16" to i8*
-  %".44" = call i32 (i8*, ...) @"printf"(i8* %".43", double %"i.3")
-  %".45" = bitcast [2 x i8]* @"nl_.17" to i8*
-  %".46" = call i32 (i8*, ...) @"printf"(i8* %".45")
+  %".40" = bitcast [4 x i8]* @"fmt_.14" to i8*
+  %".41" = call i32 (i8*, ...) @"printf"(i8* %".40", i8* %".39")
+  call void @"minilua_print_number"(double %"i.3")
+  %".43" = bitcast [2 x i8]* @"nl_.15" to i8*
+  %".44" = call i32 (i8*, ...) @"printf"(i8* %".43")
   %"i.4" = load double, double* %"i.1"
   %"nextval" = fadd double %"i.4", 0x3ff0000000000000
   store double %"nextval", double* %"i.1"
@@ -117,9 +127,7 @@ for_merge:
 @"nl_.9" = internal constant [2 x i8] c"\0a\00"
 @"str_.10" = internal constant [7 x i8] c"Count:\00"
 @"fmt_.11" = internal constant [4 x i8] c"%s \00"
-@"fmt_.12" = internal constant [5 x i8] c"%.2f\00"
-@"nl_.13" = internal constant [2 x i8] c"\0a\00"
-@"str_.14" = internal constant [11 x i8] c"Countdown:\00"
-@"fmt_.15" = internal constant [4 x i8] c"%s \00"
-@"fmt_.16" = internal constant [5 x i8] c"%.2f\00"
-@"nl_.17" = internal constant [2 x i8] c"\0a\00"
+@"nl_.12" = internal constant [2 x i8] c"\0a\00"
+@"str_.13" = internal constant [11 x i8] c"Countdown:\00"
+@"fmt_.14" = internal constant [4 x i8] c"%s \00"
+@"nl_.15" = internal constant [2 x i8] c"\0a\00"

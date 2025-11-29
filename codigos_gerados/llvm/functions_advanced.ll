@@ -28,6 +28,8 @@ declare i32 @"minilua_array_length"(i8* %".1")
 
 declare i8* @"minilua_get_data_ptr"(i8* %".1")
 
+declare void @"minilua_print_number"(double %".1")
+
 define double @"soma"(double %"a", double %"b")
 {
 entry:
@@ -102,70 +104,65 @@ entry:
   %"res.1" = load double, double* %"res"
   %".11" = bitcast [4 x i8]* @"fmt_.5" to i8*
   %".12" = call i32 (i8*, ...) @"printf"(i8* %".11", i8* %".10")
-  %".13" = bitcast [5 x i8]* @"fmt_.6" to i8*
-  %".14" = call i32 (i8*, ...) @"printf"(i8* %".13", double %"res.1")
-  %".15" = bitcast [2 x i8]* @"nl_.7" to i8*
-  %".16" = call i32 (i8*, ...) @"printf"(i8* %".15")
-  %".17" = bitcast [28 x i8]* @"str_.8" to i8*
-  %".18" = call double @"fatorial"(double 0x4014000000000000)
-  %".19" = bitcast [4 x i8]* @"fmt_.9" to i8*
-  %".20" = call i32 (i8*, ...) @"printf"(i8* %".19", i8* %".17")
-  %".21" = bitcast [5 x i8]* @"fmt_.10" to i8*
-  %".22" = call i32 (i8*, ...) @"printf"(i8* %".21", double %".18")
-  %".23" = bitcast [2 x i8]* @"nl_.11" to i8*
-  %".24" = call i32 (i8*, ...) @"printf"(i8* %".23")
-  %".25" = bitcast [29 x i8]* @"str_.12" to i8*
-  %".26" = call double @"fatorial"(double 0x401c000000000000)
-  %".27" = bitcast [4 x i8]* @"fmt_.13" to i8*
-  %".28" = call i32 (i8*, ...) @"printf"(i8* %".27", i8* %".25")
-  %".29" = bitcast [5 x i8]* @"fmt_.14" to i8*
-  %".30" = call i32 (i8*, ...) @"printf"(i8* %".29", double %".26")
-  %".31" = bitcast [2 x i8]* @"nl_.15" to i8*
-  %".32" = call i32 (i8*, ...) @"printf"(i8* %".31")
-  %".33" = bitcast [29 x i8]* @"str_.16" to i8*
-  %".34" = call double @"fibonacci"(double 0x4024000000000000)
-  %".35" = bitcast [4 x i8]* @"fmt_.17" to i8*
-  %".36" = call i32 (i8*, ...) @"printf"(i8* %".35", i8* %".33")
-  %".37" = bitcast [5 x i8]* @"fmt_.18" to i8*
-  %".38" = call i32 (i8*, ...) @"printf"(i8* %".37", double %".34")
-  %".39" = bitcast [2 x i8]* @"nl_.19" to i8*
-  %".40" = call i32 (i8*, ...) @"printf"(i8* %".39")
+  call void @"minilua_print_number"(double %"res.1")
+  %".14" = bitcast [2 x i8]* @"nl_.6" to i8*
+  %".15" = call i32 (i8*, ...) @"printf"(i8* %".14")
+  %".16" = bitcast [28 x i8]* @"str_.7" to i8*
+  %".17" = call double @"fatorial"(double 0x4014000000000000)
+  %".18" = bitcast [4 x i8]* @"fmt_.8" to i8*
+  %".19" = call i32 (i8*, ...) @"printf"(i8* %".18", i8* %".16")
+  call void @"minilua_print_number"(double %".17")
+  %".21" = bitcast [2 x i8]* @"nl_.9" to i8*
+  %".22" = call i32 (i8*, ...) @"printf"(i8* %".21")
+  %".23" = bitcast [29 x i8]* @"str_.10" to i8*
+  %".24" = call double @"fatorial"(double 0x401c000000000000)
+  %".25" = bitcast [4 x i8]* @"fmt_.11" to i8*
+  %".26" = call i32 (i8*, ...) @"printf"(i8* %".25", i8* %".23")
+  call void @"minilua_print_number"(double %".24")
+  %".28" = bitcast [2 x i8]* @"nl_.12" to i8*
+  %".29" = call i32 (i8*, ...) @"printf"(i8* %".28")
+  %".30" = bitcast [29 x i8]* @"str_.13" to i8*
+  %".31" = call double @"fibonacci"(double 0x4024000000000000)
+  %".32" = bitcast [4 x i8]* @"fmt_.14" to i8*
+  %".33" = call i32 (i8*, ...) @"printf"(i8* %".32", i8* %".30")
+  call void @"minilua_print_number"(double %".31")
+  %".35" = bitcast [2 x i8]* @"nl_.15" to i8*
+  %".36" = call i32 (i8*, ...) @"printf"(i8* %".35")
   %"a" = alloca double
   store double 0x4059000000000000, double* %"a"
   %"b" = alloca double
   store double 0x4069000000000000, double* %"b"
-  %".43" = bitcast [35 x i8]* @"str_.20" to i8*
+  %".39" = bitcast [35 x i8]* @"str_.16" to i8*
   %"a.1" = load double, double* %"a"
   %"b.1" = load double, double* %"b"
-  %".44" = bitcast [4 x i8]* @"fmt_.21" to i8*
-  %".45" = call i32 (i8*, ...) @"printf"(i8* %".44", i8* %".43")
-  %".46" = bitcast [6 x i8]* @"fmt_.22" to i8*
-  %".47" = call i32 (i8*, ...) @"printf"(i8* %".46", double %"a.1")
-  %".48" = bitcast [5 x i8]* @"fmt_.23" to i8*
-  %".49" = call i32 (i8*, ...) @"printf"(i8* %".48", double %"b.1")
-  %".50" = bitcast [2 x i8]* @"nl_.24" to i8*
-  %".51" = call i32 (i8*, ...) @"printf"(i8* %".50")
-  %".52" = bitcast [22 x i8]* @"str_.25" to i8*
+  %".40" = bitcast [4 x i8]* @"fmt_.17" to i8*
+  %".41" = call i32 (i8*, ...) @"printf"(i8* %".40", i8* %".39")
+  call void @"minilua_print_number"(double %"a.1")
+  %".43" = bitcast [2 x i8]* @"sp_.18" to i8*
+  %".44" = call i32 (i8*, ...) @"printf"(i8* %".43")
+  call void @"minilua_print_number"(double %"b.1")
+  %".46" = bitcast [2 x i8]* @"nl_.19" to i8*
+  %".47" = call i32 (i8*, ...) @"printf"(i8* %".46")
+  %".48" = bitcast [22 x i8]* @"str_.20" to i8*
   %"a.2" = load double, double* %"a"
   %"b.2" = load double, double* %"b"
-  %".53" = call double @"soma"(double %"a.2", double %"b.2")
-  %".54" = bitcast [4 x i8]* @"fmt_.26" to i8*
-  %".55" = call i32 (i8*, ...) @"printf"(i8* %".54", i8* %".52")
-  %".56" = bitcast [5 x i8]* @"fmt_.27" to i8*
-  %".57" = call i32 (i8*, ...) @"printf"(i8* %".56", double %".53")
-  %".58" = bitcast [2 x i8]* @"nl_.28" to i8*
-  %".59" = call i32 (i8*, ...) @"printf"(i8* %".58")
-  %".60" = bitcast [50 x i8]* @"str_.29" to i8*
+  %".49" = call double @"soma"(double %"a.2", double %"b.2")
+  %".50" = bitcast [4 x i8]* @"fmt_.21" to i8*
+  %".51" = call i32 (i8*, ...) @"printf"(i8* %".50", i8* %".48")
+  call void @"minilua_print_number"(double %".49")
+  %".53" = bitcast [2 x i8]* @"nl_.22" to i8*
+  %".54" = call i32 (i8*, ...) @"printf"(i8* %".53")
+  %".55" = bitcast [50 x i8]* @"str_.23" to i8*
   %"a.3" = load double, double* %"a"
   %"b.3" = load double, double* %"b"
-  %".61" = bitcast [4 x i8]* @"fmt_.30" to i8*
-  %".62" = call i32 (i8*, ...) @"printf"(i8* %".61", i8* %".60")
-  %".63" = bitcast [6 x i8]* @"fmt_.31" to i8*
-  %".64" = call i32 (i8*, ...) @"printf"(i8* %".63", double %"a.3")
-  %".65" = bitcast [5 x i8]* @"fmt_.32" to i8*
-  %".66" = call i32 (i8*, ...) @"printf"(i8* %".65", double %"b.3")
-  %".67" = bitcast [2 x i8]* @"nl_.33" to i8*
-  %".68" = call i32 (i8*, ...) @"printf"(i8* %".67")
+  %".56" = bitcast [4 x i8]* @"fmt_.24" to i8*
+  %".57" = call i32 (i8*, ...) @"printf"(i8* %".56", i8* %".55")
+  call void @"minilua_print_number"(double %"a.3")
+  %".59" = bitcast [2 x i8]* @"sp_.25" to i8*
+  %".60" = call i32 (i8*, ...) @"printf"(i8* %".59")
+  call void @"minilua_print_number"(double %"b.3")
+  %".62" = bitcast [2 x i8]* @"nl_.26" to i8*
+  %".63" = call i32 (i8*, ...) @"printf"(i8* %".62")
   ret i32 0
 }
 
@@ -174,31 +171,24 @@ entry:
 @"nl_.3" = internal constant [2 x i8] c"\0a\00"
 @"str_.4" = internal constant [14 x i8] c"Soma(10, 20):\00"
 @"fmt_.5" = internal constant [4 x i8] c"%s \00"
-@"fmt_.6" = internal constant [5 x i8] c"%.2f\00"
-@"nl_.7" = internal constant [2 x i8] c"\0a\00"
-@"str_.8" = internal constant [28 x i8] c"Fatorial(5) (esperado 120):\00"
-@"fmt_.9" = internal constant [4 x i8] c"%s \00"
-@"fmt_.10" = internal constant [5 x i8] c"%.2f\00"
-@"nl_.11" = internal constant [2 x i8] c"\0a\00"
-@"str_.12" = internal constant [29 x i8] c"Fatorial(7) (esperado 5040):\00"
-@"fmt_.13" = internal constant [4 x i8] c"%s \00"
-@"fmt_.14" = internal constant [5 x i8] c"%.2f\00"
+@"nl_.6" = internal constant [2 x i8] c"\0a\00"
+@"str_.7" = internal constant [28 x i8] c"Fatorial(5) (esperado 120):\00"
+@"fmt_.8" = internal constant [4 x i8] c"%s \00"
+@"nl_.9" = internal constant [2 x i8] c"\0a\00"
+@"str_.10" = internal constant [29 x i8] c"Fatorial(7) (esperado 5040):\00"
+@"fmt_.11" = internal constant [4 x i8] c"%s \00"
+@"nl_.12" = internal constant [2 x i8] c"\0a\00"
+@"str_.13" = internal constant [29 x i8] c"Fibonacci(10) (esperado 55):\00"
+@"fmt_.14" = internal constant [4 x i8] c"%s \00"
 @"nl_.15" = internal constant [2 x i8] c"\0a\00"
-@"str_.16" = internal constant [29 x i8] c"Fibonacci(10) (esperado 55):\00"
+@"str_.16" = internal constant [35 x i8] c"Variaveis locais antes da chamada:\00"
 @"fmt_.17" = internal constant [4 x i8] c"%s \00"
-@"fmt_.18" = internal constant [5 x i8] c"%.2f\00"
+@"sp_.18" = internal constant [2 x i8] c" \00"
 @"nl_.19" = internal constant [2 x i8] c"\0a\00"
-@"str_.20" = internal constant [35 x i8] c"Variaveis locais antes da chamada:\00"
+@"str_.20" = internal constant [22 x i8] c"Resultado soma(a, b):\00"
 @"fmt_.21" = internal constant [4 x i8] c"%s \00"
-@"fmt_.22" = internal constant [6 x i8] c"%.2f \00"
-@"fmt_.23" = internal constant [5 x i8] c"%.2f\00"
-@"nl_.24" = internal constant [2 x i8] c"\0a\00"
-@"str_.25" = internal constant [22 x i8] c"Resultado soma(a, b):\00"
-@"fmt_.26" = internal constant [4 x i8] c"%s \00"
-@"fmt_.27" = internal constant [5 x i8] c"%.2f\00"
-@"nl_.28" = internal constant [2 x i8] c"\0a\00"
-@"str_.29" = internal constant [50 x i8] c"Variaveis locais apos chamada (devem ser iguais):\00"
-@"fmt_.30" = internal constant [4 x i8] c"%s \00"
-@"fmt_.31" = internal constant [6 x i8] c"%.2f \00"
-@"fmt_.32" = internal constant [5 x i8] c"%.2f\00"
-@"nl_.33" = internal constant [2 x i8] c"\0a\00"
+@"nl_.22" = internal constant [2 x i8] c"\0a\00"
+@"str_.23" = internal constant [50 x i8] c"Variaveis locais apos chamada (devem ser iguais):\00"
+@"fmt_.24" = internal constant [4 x i8] c"%s \00"
+@"sp_.25" = internal constant [2 x i8] c" \00"
+@"nl_.26" = internal constant [2 x i8] c"\0a\00"

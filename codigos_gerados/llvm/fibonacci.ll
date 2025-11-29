@@ -18,6 +18,18 @@ declare i8* @"strcpy"(i8* %".1", i8* %".2")
 
 declare i8* @"strcat"(i8* %".1", i8* %".2")
 
+declare i32 @"scanf"(i8* %".1", ...)
+
+declare i8* @"minilua_new_array"(i32 %".1")
+
+declare void @"minilua_ensure_capacity"(i8* %".1", i32 %".2")
+
+declare i32 @"minilua_array_length"(i8* %".1")
+
+declare i8* @"minilua_get_data_ptr"(i8* %".1")
+
+declare void @"minilua_print_number"(double %".1")
+
 define double @"fib"(double %"n")
 {
 entry:
@@ -49,12 +61,10 @@ entry:
   store double 0x4024000000000000, double* %"n"
   %"n.1" = load double, double* %"n"
   %".3" = call double @"fib"(double %"n.1")
-  %".4" = bitcast [5 x i8]* @"fmt_.1" to i8*
-  %".5" = call i32 (i8*, ...) @"printf"(i8* %".4", double %".3")
-  %".6" = bitcast [2 x i8]* @"nl_.2" to i8*
-  %".7" = call i32 (i8*, ...) @"printf"(i8* %".6")
+  call void @"minilua_print_number"(double %".3")
+  %".5" = bitcast [2 x i8]* @"nl_.1" to i8*
+  %".6" = call i32 (i8*, ...) @"printf"(i8* %".5")
   ret i32 0
 }
 
-@"fmt_.1" = internal constant [5 x i8] c"%.2f\00"
-@"nl_.2" = internal constant [2 x i8] c"\0a\00"
+@"nl_.1" = internal constant [2 x i8] c"\0a\00"

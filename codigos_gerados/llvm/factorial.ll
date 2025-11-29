@@ -28,6 +28,8 @@ declare i32 @"minilua_array_length"(i8* %".1")
 
 declare i8* @"minilua_get_data_ptr"(i8* %".1")
 
+declare void @"minilua_print_number"(double %".1")
+
 define double @"factorial"(double %"n")
 {
 entry:
@@ -65,13 +67,13 @@ entry:
   %"result.1" = load double, double* %"result"
   %".8" = bitcast [4 x i8]* @"fmt_.3" to i8*
   %".9" = call i32 (i8*, ...) @"printf"(i8* %".8", i8* %".6")
-  %".10" = bitcast [6 x i8]* @"fmt_.4" to i8*
-  %".11" = call i32 (i8*, ...) @"printf"(i8* %".10", double %"num.2")
-  %".12" = bitcast [4 x i8]* @"fmt_.5" to i8*
-  %".13" = call i32 (i8*, ...) @"printf"(i8* %".12", i8* %".7")
-  %".14" = bitcast [5 x i8]* @"fmt_.6" to i8*
-  %".15" = call i32 (i8*, ...) @"printf"(i8* %".14", double %"result.1")
-  %".16" = bitcast [2 x i8]* @"nl_.7" to i8*
+  call void @"minilua_print_number"(double %"num.2")
+  %".11" = bitcast [2 x i8]* @"sp_.4" to i8*
+  %".12" = call i32 (i8*, ...) @"printf"(i8* %".11")
+  %".13" = bitcast [4 x i8]* @"fmt_.5" to i8*
+  %".14" = call i32 (i8*, ...) @"printf"(i8* %".13", i8* %".7")
+  call void @"minilua_print_number"(double %"result.1")
+  %".16" = bitcast [2 x i8]* @"nl_.6" to i8*
   %".17" = call i32 (i8*, ...) @"printf"(i8* %".16")
   ret i32 0
 }
@@ -79,7 +81,6 @@ entry:
 @"str_.1" = internal constant [12 x i8] c"Fatorial de\00"
 @"str_.2" = internal constant [3 x i8] c"eh\00"
 @"fmt_.3" = internal constant [4 x i8] c"%s \00"
-@"fmt_.4" = internal constant [6 x i8] c"%.2f \00"
+@"sp_.4" = internal constant [2 x i8] c" \00"
 @"fmt_.5" = internal constant [4 x i8] c"%s \00"
-@"fmt_.6" = internal constant [5 x i8] c"%.2f\00"
-@"nl_.7" = internal constant [2 x i8] c"\0a\00"
+@"nl_.6" = internal constant [2 x i8] c"\0a\00"

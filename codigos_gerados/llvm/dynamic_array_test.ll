@@ -28,6 +28,8 @@ declare i32 @"minilua_array_length"(i8* %".1")
 
 declare i8* @"minilua_get_data_ptr"(i8* %".1")
 
+declare void @"minilua_print_number"(double %".1")
+
 define i32 @"main"()
 {
 entry:
@@ -58,34 +60,28 @@ entry:
   %".17" = bitcast i8* %".16" to double*
   %"elem_ptr.2" = getelementptr double, double* %".17", i32 %"idx_adj.2"
   %"elem_val" = load double, double* %"elem_ptr.2"
-  %".18" = bitcast [5 x i8]* @"fmt_.1" to i8*
-  %".19" = call i32 (i8*, ...) @"printf"(i8* %".18", double %"elem_val")
-  %".20" = bitcast [2 x i8]* @"nl_.2" to i8*
-  %".21" = call i32 (i8*, ...) @"printf"(i8* %".20")
+  call void @"minilua_print_number"(double %"elem_val")
+  %".19" = bitcast [2 x i8]* @"nl_.1" to i8*
+  %".20" = call i32 (i8*, ...) @"printf"(i8* %".19")
   %"arr_ptr.3" = load i8*, i8** %"arr"
-  %".22" = fptosi double 0x4018000000000000 to i32
-  %"idx_adj.3" = sub i32 %".22", 1
-  %".23" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.3")
-  %".24" = bitcast i8* %".23" to double*
-  %"elem_ptr.3" = getelementptr double, double* %".24", i32 %"idx_adj.3"
+  %".21" = fptosi double 0x4018000000000000 to i32
+  %"idx_adj.3" = sub i32 %".21", 1
+  %".22" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.3")
+  %".23" = bitcast i8* %".22" to double*
+  %"elem_ptr.3" = getelementptr double, double* %".23", i32 %"idx_adj.3"
   %"elem_val.1" = load double, double* %"elem_ptr.3"
-  %".25" = bitcast [5 x i8]* @"fmt_.3" to i8*
-  %".26" = call i32 (i8*, ...) @"printf"(i8* %".25", double %"elem_val.1")
-  %".27" = bitcast [2 x i8]* @"nl_.4" to i8*
-  %".28" = call i32 (i8*, ...) @"printf"(i8* %".27")
+  call void @"minilua_print_number"(double %"elem_val.1")
+  %".25" = bitcast [2 x i8]* @"nl_.2" to i8*
+  %".26" = call i32 (i8*, ...) @"printf"(i8* %".25")
   %"arr.1" = load i8*, i8** %"arr"
   %"arr_len" = call i32 @"minilua_array_length"(i8* %"arr.1")
-  %".29" = sitofp i32 %"arr_len" to double
-  %".30" = bitcast [5 x i8]* @"fmt_.5" to i8*
-  %".31" = call i32 (i8*, ...) @"printf"(i8* %".30", double %".29")
-  %".32" = bitcast [2 x i8]* @"nl_.6" to i8*
-  %".33" = call i32 (i8*, ...) @"printf"(i8* %".32")
+  %".27" = sitofp i32 %"arr_len" to double
+  call void @"minilua_print_number"(double %".27")
+  %".29" = bitcast [2 x i8]* @"nl_.3" to i8*
+  %".30" = call i32 (i8*, ...) @"printf"(i8* %".29")
   ret i32 0
 }
 
-@"fmt_.1" = internal constant [5 x i8] c"%.2f\00"
+@"nl_.1" = internal constant [2 x i8] c"\0a\00"
 @"nl_.2" = internal constant [2 x i8] c"\0a\00"
-@"fmt_.3" = internal constant [5 x i8] c"%.2f\00"
-@"nl_.4" = internal constant [2 x i8] c"\0a\00"
-@"fmt_.5" = internal constant [5 x i8] c"%.2f\00"
-@"nl_.6" = internal constant [2 x i8] c"\0a\00"
+@"nl_.3" = internal constant [2 x i8] c"\0a\00"

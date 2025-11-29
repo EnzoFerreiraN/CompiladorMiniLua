@@ -28,6 +28,8 @@ declare i32 @"minilua_array_length"(i8* %".1")
 
 declare i8* @"minilua_get_data_ptr"(i8* %".1")
 
+declare void @"minilua_print_number"(double %".1")
+
 define i32 @"main"()
 {
 entry:
@@ -52,19 +54,17 @@ entry:
   %"n.1" = load double, double* %"n"
   %".18" = bitcast [4 x i8]* @"fmt_.9" to i8*
   %".19" = call i32 (i8*, ...) @"printf"(i8* %".18", i8* %".17")
-  %".20" = bitcast [5 x i8]* @"fmt_.10" to i8*
-  %".21" = call i32 (i8*, ...) @"printf"(i8* %".20", double %"n.1")
-  %".22" = bitcast [2 x i8]* @"nl_.11" to i8*
-  %".23" = call i32 (i8*, ...) @"printf"(i8* %".22")
-  %".24" = bitcast [11 x i8]* @"str_.12" to i8*
+  call void @"minilua_print_number"(double %"n.1")
+  %".21" = bitcast [2 x i8]* @"nl_.10" to i8*
+  %".22" = call i32 (i8*, ...) @"printf"(i8* %".21")
+  %".23" = bitcast [11 x i8]* @"str_.11" to i8*
   %"n.2" = load double, double* %"n"
   %"multmp" = fmul double %"n.2", 0x4000000000000000
-  %".25" = bitcast [4 x i8]* @"fmt_.13" to i8*
-  %".26" = call i32 (i8*, ...) @"printf"(i8* %".25", i8* %".24")
-  %".27" = bitcast [5 x i8]* @"fmt_.14" to i8*
-  %".28" = call i32 (i8*, ...) @"printf"(i8* %".27", double %"multmp")
-  %".29" = bitcast [2 x i8]* @"nl_.15" to i8*
-  %".30" = call i32 (i8*, ...) @"printf"(i8* %".29")
+  %".24" = bitcast [4 x i8]* @"fmt_.12" to i8*
+  %".25" = call i32 (i8*, ...) @"printf"(i8* %".24", i8* %".23")
+  call void @"minilua_print_number"(double %"multmp")
+  %".27" = bitcast [2 x i8]* @"nl_.13" to i8*
+  %".28" = call i32 (i8*, ...) @"printf"(i8* %".27")
   ret i32 0
 }
 
@@ -77,9 +77,7 @@ entry:
 @"fmt_in_num_.7" = internal constant [4 x i8] c"%lf\00"
 @"str_.8" = internal constant [14 x i8] c"Voce digitou:\00"
 @"fmt_.9" = internal constant [4 x i8] c"%s \00"
-@"fmt_.10" = internal constant [5 x i8] c"%.2f\00"
-@"nl_.11" = internal constant [2 x i8] c"\0a\00"
-@"str_.12" = internal constant [11 x i8] c"O dobro e:\00"
-@"fmt_.13" = internal constant [4 x i8] c"%s \00"
-@"fmt_.14" = internal constant [5 x i8] c"%.2f\00"
-@"nl_.15" = internal constant [2 x i8] c"\0a\00"
+@"nl_.10" = internal constant [2 x i8] c"\0a\00"
+@"str_.11" = internal constant [11 x i8] c"O dobro e:\00"
+@"fmt_.12" = internal constant [4 x i8] c"%s \00"
+@"nl_.13" = internal constant [2 x i8] c"\0a\00"
