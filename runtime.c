@@ -67,14 +67,6 @@ void* minilua_get_data_ptr(DynamicArray* arr) {
     return arr->data;
 }
 
-void minilua_print_number(double n) {
-    if (n == (long long)n) {
-        printf("%lld", (long long)n);
-    } else {
-        printf("%.14g", n);
-    }
-}
-
 void minilua_check_index(int index) {
     if (index < 1) {
         fprintf(stderr, "Runtime Error: Array index must be >= 1 (got %d)\n", index);

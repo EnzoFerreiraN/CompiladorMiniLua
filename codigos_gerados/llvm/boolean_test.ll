@@ -28,8 +28,6 @@ declare i32 @"minilua_array_length"(i8* %".1")
 
 declare i8* @"minilua_get_data_ptr"(i8* %".1")
 
-declare void @"minilua_print_number"(double %".1")
-
 declare void @"minilua_check_index"(i32 %".1")
 
 define i32 @"main"()

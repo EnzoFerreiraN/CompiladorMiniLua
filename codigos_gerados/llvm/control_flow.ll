@@ -28,8 +28,6 @@ declare i32 @"minilua_array_length"(i8* %".1")
 
 declare i8* @"minilua_get_data_ptr"(i8* %".1")
 
-declare void @"minilua_print_number"(double %".1")
-
 declare void @"minilua_check_index"(i32 %".1")
 
 define i32 @"main"()
@@ -82,19 +80,31 @@ while_body:
   %"count.2" = load double, double* %"count"
   %".28" = bitcast [4 x i8]* @"fmt_.11" to i8*
   %".29" = call i32 (i8*, ...) @"printf"(i8* %".28", i8* %".27")
-  call void @"minilua_print_number"(double %"count.2")
-  %".31" = bitcast [2 x i8]* @"nl_.12" to i8*
-  %".32" = call i32 (i8*, ...) @"printf"(i8* %".31")
-  %"count.3" = load double, double* %"count"
-  %"addtmp" = fadd double %"count.3", 0x3ff0000000000000
-  store double %"addtmp", double* %"count"
-  br label %"while_cond"
+  %".30" = fptosi double %"count.2" to i64
+  %".31" = sitofp i64 %".30" to double
+  %"is_int" = fcmp oeq double %"count.2", %".31"
+  br i1 %"is_int", label %"print_int", label %"print_float"
 while_merge:
   %"i" = alloca double
   store double              0x0, double* %"i"
   %"i.1" = alloca double
   store double 0x3ff0000000000000, double* %"i.1"
   br label %"for_cond"
+print_int:
+  %".33" = bitcast [5 x i8]* @"fmt_int_.12" to i8*
+  %".34" = call i32 (i8*, ...) @"printf"(i8* %".33", i64 %".30")
+  br label %"print_merge"
+print_float:
+  %".36" = bitcast [6 x i8]* @"fmt_flt_.13" to i8*
+  %".37" = call i32 (i8*, ...) @"printf"(i8* %".36", double %"count.2")
+  br label %"print_merge"
+print_merge:
+  %".39" = bitcast [2 x i8]* @"nl_.14" to i8*
+  %".40" = call i32 (i8*, ...) @"printf"(i8* %".39")
+  %"count.3" = load double, double* %"count"
+  %"addtmp" = fadd double %"count.3", 0x3ff0000000000000
+  store double %"addtmp", double* %"count"
+  br label %"while_cond"
 for_cond:
   %"i.2" = load double, double* %"i.1"
   %"step_ge_0" = fcmp oge double 0x3ff0000000000000,              0x0
@@ -103,19 +113,31 @@ for_cond:
   %"forcond" = select  i1 %"step_ge_0", i1 %"cond_le", i1 %"cond_ge"
   br i1 %"forcond", label %"for_body", label %"for_merge"
 for_body:
-  %".39" = bitcast [11 x i8]* @"str_.13" to i8*
+  %".47" = bitcast [11 x i8]* @"str_.15" to i8*
   %"i.3" = load double, double* %"i.1"
-  %".40" = bitcast [4 x i8]* @"fmt_.14" to i8*
-  %".41" = call i32 (i8*, ...) @"printf"(i8* %".40", i8* %".39")
-  call void @"minilua_print_number"(double %"i.3")
-  %".43" = bitcast [2 x i8]* @"nl_.15" to i8*
-  %".44" = call i32 (i8*, ...) @"printf"(i8* %".43")
+  %".48" = bitcast [4 x i8]* @"fmt_.16" to i8*
+  %".49" = call i32 (i8*, ...) @"printf"(i8* %".48", i8* %".47")
+  %".50" = fptosi double %"i.3" to i64
+  %".51" = sitofp i64 %".50" to double
+  %"is_int.1" = fcmp oeq double %"i.3", %".51"
+  br i1 %"is_int.1", label %"print_int.1", label %"print_float.1"
+for_merge:
+  ret i32 0
+print_int.1:
+  %".53" = bitcast [5 x i8]* @"fmt_int_.17" to i8*
+  %".54" = call i32 (i8*, ...) @"printf"(i8* %".53", i64 %".50")
+  br label %"print_merge.1"
+print_float.1:
+  %".56" = bitcast [6 x i8]* @"fmt_flt_.18" to i8*
+  %".57" = call i32 (i8*, ...) @"printf"(i8* %".56", double %"i.3")
+  br label %"print_merge.1"
+print_merge.1:
+  %".59" = bitcast [2 x i8]* @"nl_.19" to i8*
+  %".60" = call i32 (i8*, ...) @"printf"(i8* %".59")
   %"i.4" = load double, double* %"i.1"
   %"nextval" = fadd double %"i.4", 0x3ff0000000000000
   store double %"nextval", double* %"i.1"
   br label %"for_cond"
-for_merge:
-  ret i32 0
 }
 
 @"str_.1" = internal constant [14 x i8] c"x maior que y\00"
@@ -129,7 +151,11 @@ for_merge:
 @"nl_.9" = internal constant [2 x i8] c"\0a\00"
 @"str_.10" = internal constant [7 x i8] c"Count:\00"
 @"fmt_.11" = internal constant [4 x i8] c"%s \00"
-@"nl_.12" = internal constant [2 x i8] c"\0a\00"
-@"str_.13" = internal constant [11 x i8] c"Countdown:\00"
-@"fmt_.14" = internal constant [4 x i8] c"%s \00"
-@"nl_.15" = internal constant [2 x i8] c"\0a\00"
+@"fmt_int_.12" = internal constant [5 x i8] c"%lld\00"
+@"fmt_flt_.13" = internal constant [6 x i8] c"%.14g\00"
+@"nl_.14" = internal constant [2 x i8] c"\0a\00"
+@"str_.15" = internal constant [11 x i8] c"Countdown:\00"
+@"fmt_.16" = internal constant [4 x i8] c"%s \00"
+@"fmt_int_.17" = internal constant [5 x i8] c"%lld\00"
+@"fmt_flt_.18" = internal constant [6 x i8] c"%.14g\00"
+@"nl_.19" = internal constant [2 x i8] c"\0a\00"

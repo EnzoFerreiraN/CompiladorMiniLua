@@ -28,8 +28,6 @@ declare i32 @"minilua_array_length"(i8* %".1")
 
 declare i8* @"minilua_get_data_ptr"(i8* %".1")
 
-declare void @"minilua_print_number"(double %".1")
-
 declare void @"minilua_check_index"(i32 %".1")
 
 define i32 @"main"()
@@ -173,131 +171,143 @@ while_body:
   %"str_build.2" = load i8*, i8** %"str_build"
   %".87" = bitcast [4 x i8]* @"fmt_.35" to i8*
   %".88" = call i32 (i8*, ...) @"printf"(i8* %".87", i8* %".85")
-  call void @"minilua_print_number"(double %"i.2")
-  %".90" = bitcast [2 x i8]* @"sp_.36" to i8*
-  %".91" = call i32 (i8*, ...) @"printf"(i8* %".90")
-  %".92" = bitcast [4 x i8]* @"fmt_.37" to i8*
-  %".93" = call i32 (i8*, ...) @"printf"(i8* %".92", i8* %".86")
-  %".94" = bitcast [3 x i8]* @"fmt_.38" to i8*
-  %".95" = call i32 (i8*, ...) @"printf"(i8* %".94", i8* %"str_build.2")
-  %".96" = bitcast [2 x i8]* @"nl_.39" to i8*
-  %".97" = call i32 (i8*, ...) @"printf"(i8* %".96")
-  %"i.3" = load double, double* %"i"
-  %"addtmp" = fadd double %"i.3", 0x3ff0000000000000
-  store double %"addtmp", double* %"i"
-  br label %"while_cond"
+  %".89" = fptosi double %"i.2" to i64
+  %".90" = sitofp i64 %".89" to double
+  %"is_int" = fcmp oeq double %"i.2", %".90"
+  br i1 %"is_int", label %"print_int", label %"print_float"
 while_merge:
-  %".100" = bitcast [7 x i8]* @"str_.40" to i8*
+  %".108" = bitcast [7 x i8]* @"str_.42" to i8*
   %"str_build.3" = load i8*, i8** %"str_build"
-  %".101" = bitcast [4 x i8]* @"fmt_.41" to i8*
-  %".102" = call i32 (i8*, ...) @"printf"(i8* %".101", i8* %".100")
-  %".103" = bitcast [3 x i8]* @"fmt_.42" to i8*
-  %".104" = call i32 (i8*, ...) @"printf"(i8* %".103", i8* %"str_build.3")
-  %".105" = bitcast [2 x i8]* @"nl_.43" to i8*
-  %".106" = call i32 (i8*, ...) @"printf"(i8* %".105")
-  %".107" = bitcast [17 x i8]* @"str_.44" to i8*
-  %".108" = bitcast [3 x i8]* @"fmt_.45" to i8*
-  %".109" = call i32 (i8*, ...) @"printf"(i8* %".108", i8* %".107")
-  %".110" = bitcast [2 x i8]* @"nl_.46" to i8*
-  %".111" = call i32 (i8*, ...) @"printf"(i8* %".110")
+  %".109" = bitcast [4 x i8]* @"fmt_.43" to i8*
+  %".110" = call i32 (i8*, ...) @"printf"(i8* %".109", i8* %".108")
+  %".111" = bitcast [3 x i8]* @"fmt_.44" to i8*
+  %".112" = call i32 (i8*, ...) @"printf"(i8* %".111", i8* %"str_build.3")
+  %".113" = bitcast [2 x i8]* @"nl_.45" to i8*
+  %".114" = call i32 (i8*, ...) @"printf"(i8* %".113")
+  %".115" = bitcast [17 x i8]* @"str_.46" to i8*
+  %".116" = bitcast [3 x i8]* @"fmt_.47" to i8*
+  %".117" = call i32 (i8*, ...) @"printf"(i8* %".116", i8* %".115")
+  %".118" = bitcast [2 x i8]* @"nl_.48" to i8*
+  %".119" = call i32 (i8*, ...) @"printf"(i8* %".118")
   %"empty" = alloca i8*
-  %".112" = bitcast [1 x i8]* @"str_.47" to i8*
-  store i8* %".112", i8** %"empty"
+  %".120" = bitcast [1 x i8]* @"str_.49" to i8*
+  store i8* %".120", i8** %"empty"
   %"full" = alloca i8*
-  %".114" = bitcast [6 x i8]* @"str_.48" to i8*
-  store i8* %".114", i8** %"full"
-  %".116" = bitcast [2 x i8]* @"str_.49" to i8*
+  %".122" = bitcast [6 x i8]* @"str_.50" to i8*
+  store i8* %".122", i8** %"full"
+  %".124" = bitcast [2 x i8]* @"str_.51" to i8*
   %"empty.1" = load i8*, i8** %"empty"
-  %"len1.7" = call i32 @"strlen"(i8* %".116")
+  %"len1.7" = call i32 @"strlen"(i8* %".124")
   %"len2.7" = call i32 @"strlen"(i8* %"empty.1")
   %"total_len.7" = add i32 %"len1.7", %"len2.7"
-  %".117" = add i32 %"total_len.7", 1
-  %"new_str_void.7" = call i8* @"malloc"(i32 %".117")
-  %".118" = call i8* @"strcpy"(i8* %"new_str_void.7", i8* %".116")
-  %".119" = call i8* @"strcat"(i8* %"new_str_void.7", i8* %"empty.1")
+  %".125" = add i32 %"total_len.7", 1
+  %"new_str_void.7" = call i8* @"malloc"(i32 %".125")
+  %".126" = call i8* @"strcpy"(i8* %"new_str_void.7", i8* %".124")
+  %".127" = call i8* @"strcat"(i8* %"new_str_void.7", i8* %"empty.1")
   %"full.1" = load i8*, i8** %"full"
   %"len1.8" = call i32 @"strlen"(i8* %"new_str_void.7")
   %"len2.8" = call i32 @"strlen"(i8* %"full.1")
   %"total_len.8" = add i32 %"len1.8", %"len2.8"
-  %".120" = add i32 %"total_len.8", 1
-  %"new_str_void.8" = call i8* @"malloc"(i32 %".120")
-  %".121" = call i8* @"strcpy"(i8* %"new_str_void.8", i8* %"new_str_void.7")
-  %".122" = call i8* @"strcat"(i8* %"new_str_void.8", i8* %"full.1")
-  %".123" = bitcast [2 x i8]* @"str_.50" to i8*
+  %".128" = add i32 %"total_len.8", 1
+  %"new_str_void.8" = call i8* @"malloc"(i32 %".128")
+  %".129" = call i8* @"strcpy"(i8* %"new_str_void.8", i8* %"new_str_void.7")
+  %".130" = call i8* @"strcat"(i8* %"new_str_void.8", i8* %"full.1")
+  %".131" = bitcast [2 x i8]* @"str_.52" to i8*
   %"len1.9" = call i32 @"strlen"(i8* %"new_str_void.8")
-  %"len2.9" = call i32 @"strlen"(i8* %".123")
+  %"len2.9" = call i32 @"strlen"(i8* %".131")
   %"total_len.9" = add i32 %"len1.9", %"len2.9"
-  %".124" = add i32 %"total_len.9", 1
-  %"new_str_void.9" = call i8* @"malloc"(i32 %".124")
-  %".125" = call i8* @"strcpy"(i8* %"new_str_void.9", i8* %"new_str_void.8")
-  %".126" = call i8* @"strcat"(i8* %"new_str_void.9", i8* %".123")
-  %".127" = bitcast [3 x i8]* @"fmt_.51" to i8*
-  %".128" = call i32 (i8*, ...) @"printf"(i8* %".127", i8* %"new_str_void.9")
-  %".129" = bitcast [2 x i8]* @"nl_.52" to i8*
-  %".130" = call i32 (i8*, ...) @"printf"(i8* %".129")
-  %".131" = bitcast [2 x i8]* @"str_.53" to i8*
+  %".132" = add i32 %"total_len.9", 1
+  %"new_str_void.9" = call i8* @"malloc"(i32 %".132")
+  %".133" = call i8* @"strcpy"(i8* %"new_str_void.9", i8* %"new_str_void.8")
+  %".134" = call i8* @"strcat"(i8* %"new_str_void.9", i8* %".131")
+  %".135" = bitcast [3 x i8]* @"fmt_.53" to i8*
+  %".136" = call i32 (i8*, ...) @"printf"(i8* %".135", i8* %"new_str_void.9")
+  %".137" = bitcast [2 x i8]* @"nl_.54" to i8*
+  %".138" = call i32 (i8*, ...) @"printf"(i8* %".137")
+  %".139" = bitcast [2 x i8]* @"str_.55" to i8*
   %"full.2" = load i8*, i8** %"full"
-  %"len1.10" = call i32 @"strlen"(i8* %".131")
+  %"len1.10" = call i32 @"strlen"(i8* %".139")
   %"len2.10" = call i32 @"strlen"(i8* %"full.2")
   %"total_len.10" = add i32 %"len1.10", %"len2.10"
-  %".132" = add i32 %"total_len.10", 1
-  %"new_str_void.10" = call i8* @"malloc"(i32 %".132")
-  %".133" = call i8* @"strcpy"(i8* %"new_str_void.10", i8* %".131")
-  %".134" = call i8* @"strcat"(i8* %"new_str_void.10", i8* %"full.2")
+  %".140" = add i32 %"total_len.10", 1
+  %"new_str_void.10" = call i8* @"malloc"(i32 %".140")
+  %".141" = call i8* @"strcpy"(i8* %"new_str_void.10", i8* %".139")
+  %".142" = call i8* @"strcat"(i8* %"new_str_void.10", i8* %"full.2")
   %"empty.2" = load i8*, i8** %"empty"
   %"len1.11" = call i32 @"strlen"(i8* %"new_str_void.10")
   %"len2.11" = call i32 @"strlen"(i8* %"empty.2")
   %"total_len.11" = add i32 %"len1.11", %"len2.11"
-  %".135" = add i32 %"total_len.11", 1
-  %"new_str_void.11" = call i8* @"malloc"(i32 %".135")
-  %".136" = call i8* @"strcpy"(i8* %"new_str_void.11", i8* %"new_str_void.10")
-  %".137" = call i8* @"strcat"(i8* %"new_str_void.11", i8* %"empty.2")
-  %".138" = bitcast [2 x i8]* @"str_.54" to i8*
+  %".143" = add i32 %"total_len.11", 1
+  %"new_str_void.11" = call i8* @"malloc"(i32 %".143")
+  %".144" = call i8* @"strcpy"(i8* %"new_str_void.11", i8* %"new_str_void.10")
+  %".145" = call i8* @"strcat"(i8* %"new_str_void.11", i8* %"empty.2")
+  %".146" = bitcast [2 x i8]* @"str_.56" to i8*
   %"len1.12" = call i32 @"strlen"(i8* %"new_str_void.11")
-  %"len2.12" = call i32 @"strlen"(i8* %".138")
+  %"len2.12" = call i32 @"strlen"(i8* %".146")
   %"total_len.12" = add i32 %"len1.12", %"len2.12"
-  %".139" = add i32 %"total_len.12", 1
-  %"new_str_void.12" = call i8* @"malloc"(i32 %".139")
-  %".140" = call i8* @"strcpy"(i8* %"new_str_void.12", i8* %"new_str_void.11")
-  %".141" = call i8* @"strcat"(i8* %"new_str_void.12", i8* %".138")
-  %".142" = bitcast [3 x i8]* @"fmt_.55" to i8*
-  %".143" = call i32 (i8*, ...) @"printf"(i8* %".142", i8* %"new_str_void.12")
-  %".144" = bitcast [2 x i8]* @"nl_.56" to i8*
-  %".145" = call i32 (i8*, ...) @"printf"(i8* %".144")
+  %".147" = add i32 %"total_len.12", 1
+  %"new_str_void.12" = call i8* @"malloc"(i32 %".147")
+  %".148" = call i8* @"strcpy"(i8* %"new_str_void.12", i8* %"new_str_void.11")
+  %".149" = call i8* @"strcat"(i8* %"new_str_void.12", i8* %".146")
+  %".150" = bitcast [3 x i8]* @"fmt_.57" to i8*
+  %".151" = call i32 (i8*, ...) @"printf"(i8* %".150", i8* %"new_str_void.12")
+  %".152" = bitcast [2 x i8]* @"nl_.58" to i8*
+  %".153" = call i32 (i8*, ...) @"printf"(i8* %".152")
   %"parte1" = alloca i8*
-  %".146" = bitcast [8 x i8]* @"str_.57" to i8*
-  store i8* %".146", i8** %"parte1"
+  %".154" = bitcast [8 x i8]* @"str_.59" to i8*
+  store i8* %".154", i8** %"parte1"
   %"parte2" = alloca i8*
-  %".148" = bitcast [8 x i8]* @"str_.58" to i8*
-  store i8* %".148", i8** %"parte2"
+  %".156" = bitcast [8 x i8]* @"str_.60" to i8*
+  store i8* %".156", i8** %"parte2"
   %"total" = alloca i8*
   %"parte1.1" = load i8*, i8** %"parte1"
-  %".150" = bitcast [4 x i8]* @"str_.59" to i8*
+  %".158" = bitcast [4 x i8]* @"str_.61" to i8*
   %"len1.13" = call i32 @"strlen"(i8* %"parte1.1")
-  %"len2.13" = call i32 @"strlen"(i8* %".150")
+  %"len2.13" = call i32 @"strlen"(i8* %".158")
   %"total_len.13" = add i32 %"len1.13", %"len2.13"
-  %".151" = add i32 %"total_len.13", 1
-  %"new_str_void.13" = call i8* @"malloc"(i32 %".151")
-  %".152" = call i8* @"strcpy"(i8* %"new_str_void.13", i8* %"parte1.1")
-  %".153" = call i8* @"strcat"(i8* %"new_str_void.13", i8* %".150")
+  %".159" = add i32 %"total_len.13", 1
+  %"new_str_void.13" = call i8* @"malloc"(i32 %".159")
+  %".160" = call i8* @"strcpy"(i8* %"new_str_void.13", i8* %"parte1.1")
+  %".161" = call i8* @"strcat"(i8* %"new_str_void.13", i8* %".158")
   %"parte2.1" = load i8*, i8** %"parte2"
   %"len1.14" = call i32 @"strlen"(i8* %"new_str_void.13")
   %"len2.14" = call i32 @"strlen"(i8* %"parte2.1")
   %"total_len.14" = add i32 %"len1.14", %"len2.14"
-  %".154" = add i32 %"total_len.14", 1
-  %"new_str_void.14" = call i8* @"malloc"(i32 %".154")
-  %".155" = call i8* @"strcpy"(i8* %"new_str_void.14", i8* %"new_str_void.13")
-  %".156" = call i8* @"strcat"(i8* %"new_str_void.14", i8* %"parte2.1")
+  %".162" = add i32 %"total_len.14", 1
+  %"new_str_void.14" = call i8* @"malloc"(i32 %".162")
+  %".163" = call i8* @"strcpy"(i8* %"new_str_void.14", i8* %"new_str_void.13")
+  %".164" = call i8* @"strcat"(i8* %"new_str_void.14", i8* %"parte2.1")
   store i8* %"new_str_void.14", i8** %"total"
-  %".158" = bitcast [7 x i8]* @"str_.60" to i8*
+  %".166" = bitcast [7 x i8]* @"str_.62" to i8*
   %"total.1" = load i8*, i8** %"total"
-  %".159" = bitcast [4 x i8]* @"fmt_.61" to i8*
-  %".160" = call i32 (i8*, ...) @"printf"(i8* %".159", i8* %".158")
-  %".161" = bitcast [3 x i8]* @"fmt_.62" to i8*
-  %".162" = call i32 (i8*, ...) @"printf"(i8* %".161", i8* %"total.1")
-  %".163" = bitcast [2 x i8]* @"nl_.63" to i8*
-  %".164" = call i32 (i8*, ...) @"printf"(i8* %".163")
+  %".167" = bitcast [4 x i8]* @"fmt_.63" to i8*
+  %".168" = call i32 (i8*, ...) @"printf"(i8* %".167", i8* %".166")
+  %".169" = bitcast [3 x i8]* @"fmt_.64" to i8*
+  %".170" = call i32 (i8*, ...) @"printf"(i8* %".169", i8* %"total.1")
+  %".171" = bitcast [2 x i8]* @"nl_.65" to i8*
+  %".172" = call i32 (i8*, ...) @"printf"(i8* %".171")
   ret i32 0
+print_int:
+  %".92" = bitcast [5 x i8]* @"fmt_int_.36" to i8*
+  %".93" = call i32 (i8*, ...) @"printf"(i8* %".92", i64 %".89")
+  br label %"print_merge"
+print_float:
+  %".95" = bitcast [6 x i8]* @"fmt_flt_.37" to i8*
+  %".96" = call i32 (i8*, ...) @"printf"(i8* %".95", double %"i.2")
+  br label %"print_merge"
+print_merge:
+  %".98" = bitcast [2 x i8]* @"sp_.38" to i8*
+  %".99" = call i32 (i8*, ...) @"printf"(i8* %".98")
+  %".100" = bitcast [4 x i8]* @"fmt_.39" to i8*
+  %".101" = call i32 (i8*, ...) @"printf"(i8* %".100", i8* %".86")
+  %".102" = bitcast [3 x i8]* @"fmt_.40" to i8*
+  %".103" = call i32 (i8*, ...) @"printf"(i8* %".102", i8* %"str_build.2")
+  %".104" = bitcast [2 x i8]* @"nl_.41" to i8*
+  %".105" = call i32 (i8*, ...) @"printf"(i8* %".104")
+  %"i.3" = load double, double* %"i"
+  %"addtmp" = fadd double %"i.3", 0x3ff0000000000000
+  store double %"addtmp", double* %"i"
+  br label %"while_cond"
 }
 
 @"str_.1" = internal constant [41 x i8] c"=== Teste 8: Concatenacao de Strings ===\00"
@@ -336,31 +346,33 @@ while_merge:
 @"str_.33" = internal constant [6 x i8] c"Passo\00"
 @"str_.34" = internal constant [2 x i8] c":\00"
 @"fmt_.35" = internal constant [4 x i8] c"%s \00"
-@"sp_.36" = internal constant [2 x i8] c" \00"
-@"fmt_.37" = internal constant [4 x i8] c"%s \00"
-@"fmt_.38" = internal constant [3 x i8] c"%s\00"
-@"nl_.39" = internal constant [2 x i8] c"\0a\00"
-@"str_.40" = internal constant [7 x i8] c"Final:\00"
-@"fmt_.41" = internal constant [4 x i8] c"%s \00"
-@"fmt_.42" = internal constant [3 x i8] c"%s\00"
-@"nl_.43" = internal constant [2 x i8] c"\0a\00"
-@"str_.44" = internal constant [17 x i8] c"5. String Vazia:\00"
-@"fmt_.45" = internal constant [3 x i8] c"%s\00"
-@"nl_.46" = internal constant [2 x i8] c"\0a\00"
-@"str_.47" = internal constant [1 x i8] c"\00"
-@"str_.48" = internal constant [6 x i8] c"Cheio\00"
-@"str_.49" = internal constant [2 x i8] c"'\00"
-@"str_.50" = internal constant [2 x i8] c"'\00"
-@"fmt_.51" = internal constant [3 x i8] c"%s\00"
-@"nl_.52" = internal constant [2 x i8] c"\0a\00"
-@"str_.53" = internal constant [2 x i8] c"'\00"
-@"str_.54" = internal constant [2 x i8] c"'\00"
-@"fmt_.55" = internal constant [3 x i8] c"%s\00"
-@"nl_.56" = internal constant [2 x i8] c"\0a\00"
-@"str_.57" = internal constant [8 x i8] c"Parte 1\00"
-@"str_.58" = internal constant [8 x i8] c"Parte 2\00"
-@"str_.59" = internal constant [4 x i8] c" e \00"
-@"str_.60" = internal constant [7 x i8] c"Total:\00"
-@"fmt_.61" = internal constant [4 x i8] c"%s \00"
-@"fmt_.62" = internal constant [3 x i8] c"%s\00"
-@"nl_.63" = internal constant [2 x i8] c"\0a\00"
+@"fmt_int_.36" = internal constant [5 x i8] c"%lld\00"
+@"fmt_flt_.37" = internal constant [6 x i8] c"%.14g\00"
+@"sp_.38" = internal constant [2 x i8] c" \00"
+@"fmt_.39" = internal constant [4 x i8] c"%s \00"
+@"fmt_.40" = internal constant [3 x i8] c"%s\00"
+@"nl_.41" = internal constant [2 x i8] c"\0a\00"
+@"str_.42" = internal constant [7 x i8] c"Final:\00"
+@"fmt_.43" = internal constant [4 x i8] c"%s \00"
+@"fmt_.44" = internal constant [3 x i8] c"%s\00"
+@"nl_.45" = internal constant [2 x i8] c"\0a\00"
+@"str_.46" = internal constant [17 x i8] c"5. String Vazia:\00"
+@"fmt_.47" = internal constant [3 x i8] c"%s\00"
+@"nl_.48" = internal constant [2 x i8] c"\0a\00"
+@"str_.49" = internal constant [1 x i8] c"\00"
+@"str_.50" = internal constant [6 x i8] c"Cheio\00"
+@"str_.51" = internal constant [2 x i8] c"'\00"
+@"str_.52" = internal constant [2 x i8] c"'\00"
+@"fmt_.53" = internal constant [3 x i8] c"%s\00"
+@"nl_.54" = internal constant [2 x i8] c"\0a\00"
+@"str_.55" = internal constant [2 x i8] c"'\00"
+@"str_.56" = internal constant [2 x i8] c"'\00"
+@"fmt_.57" = internal constant [3 x i8] c"%s\00"
+@"nl_.58" = internal constant [2 x i8] c"\0a\00"
+@"str_.59" = internal constant [8 x i8] c"Parte 1\00"
+@"str_.60" = internal constant [8 x i8] c"Parte 2\00"
+@"str_.61" = internal constant [4 x i8] c" e \00"
+@"str_.62" = internal constant [7 x i8] c"Total:\00"
+@"fmt_.63" = internal constant [4 x i8] c"%s \00"
+@"fmt_.64" = internal constant [3 x i8] c"%s\00"
+@"nl_.65" = internal constant [2 x i8] c"\0a\00"

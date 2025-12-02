@@ -1,5 +1,6 @@
 import sys
 import os
+import platform # Necessário para detectar o OS
 sys.path.append(os.path.join(os.path.dirname(__file__), 'dist'))
 
 from antlr4 import *
@@ -9,6 +10,7 @@ from dist.MiniLuaParser import MiniLuaParser
 from antlr4.error.ErrorListener import ErrorListener
 from SemanticAnalyzer import SemanticAnalyzer
 from CodeGenerator import CodeGenerator
+
 class CustomErrorListener(ErrorListener):
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
         print(f"Erro sintático na linha {line}: {msg}")
@@ -42,13 +44,20 @@ def main(argv):
     # Define caminhos de saída
     base_name = os.path.splitext(os.path.basename(argv[1]))[0]
     output_dir_llvm = os.path.join(os.path.dirname(__file__), "codigos_gerados", "llvm")
-    output_dir_exe = os.path.join(os.path.dirname(__file__), "codigos_gerados", "exe")
     
+    # Define diretório e extensão baseados no OS
+    if platform.system() == "Windows":
+        output_dir_exe = os.path.join(os.path.dirname(__file__), "codigos_gerados", "exe")
+        exe_ext = ".exe"
+    else:
+        output_dir_exe = os.path.join(os.path.dirname(__file__), "codigos_gerados", "bin")
+        exe_ext = "" # Linux/Unix geralmente não tem extensão
+
     os.makedirs(output_dir_llvm, exist_ok=True)
     os.makedirs(output_dir_exe, exist_ok=True)
     
     output_ll = os.path.join(output_dir_llvm, f"{base_name}.ll")
-    output_exe = os.path.join(output_dir_exe, f"{base_name}.exe")
+    output_exe = os.path.join(output_dir_exe, f"{base_name}{exe_ext}")
     
     code_generator.save_ir(output_ll)
     print(f"Código intermediário gerado em '{output_ll}'.")
@@ -69,91 +78,111 @@ def compile_ir(ir_file, exe_file):
     if not clang:
         print("\n[ERRO CRÍTICO] 'clang' não encontrado no PATH.")
         print("O Clang é necessário para compilar o código intermediário LLVM.")
-        print("Instale o LLVM: https://github.com/llvm/llvm-project/releases")
         return
 
     print(f"Compilando '{ir_file}'...")
     
     # Definições de arquivos temporários
-    obj_file = exe_file.replace(".exe", ".o") if exe_file.endswith(".exe") else exe_file + ".o"
+    # Garante que o objeto tenha extensão .o
+    if exe_file.endswith(".exe"):
+        obj_file = exe_file.replace(".exe", ".o")
+    else:
+        obj_file = exe_file + ".o"
+
     runtime_c = os.path.join(os.path.dirname(__file__), "runtime.c")
     runtime_o = os.path.join(os.path.dirname(__file__), "runtime.o")
-
-    # 2. Estratégia de Targets (Failover de Arquitetura)
-    # Tenta detectar a arquitetura do GCC para alinhar o target do Clang
-    target_triple = "i686-pc-windows-gnu" # Padrão MinGW 32-bit
     
-    if gcc:
-        try:
-            # Pergunta ao GCC qual a arquitetura dele
-            gcc_version = subprocess.check_output([gcc, "-dumpmachine"], text=True).strip()
-            if "x86_64" in gcc_version or "w64" in gcc_version:
-                print(f"Detectado GCC 64-bit ({gcc_version}). Ajustando target para x86_64...")
-                target_triple = "x86_64-pc-windows-gnu"
-        except:
-            pass # Se falhar, mantém o padrão i686
+    current_os = platform.system()
 
     try:
-        # --- Passo 1: Compilar LLVM IR para Objeto (.o) ---
-        # Adiciona -Wno-override-module para evitar warnings de target mismatch
-        cmd_compile = [clang, "-c", ir_file, "-o", obj_file, f"--target={target_triple}", "-Wno-override-module"]
-        subprocess.run(cmd_compile, check=True)
-        
-        # --- Passo 1.5: Compilar runtime.c para Objeto (.o) ---
-        if os.path.exists(runtime_c):
-            print(f"Compilando runtime...")
-            # Usa o mesmo compilador do linker para garantir compatibilidade
-            compiler_c = gcc if gcc else clang
+        # --- LÓGICA PARA WINDOWS ---
+        if current_os == "Windows":
+            # Tenta detectar a arquitetura do GCC para alinhar o target do Clang
+            target_triple = "i686-pc-windows-gnu" # Padrão MinGW 32-bit
             
-            # Se for GCC, compila nativo. Se for Clang, força o target.
-            cmd_runtime = [compiler_c, "-c", runtime_c, "-o", runtime_o]
-            if compiler_c == clang:
-                cmd_runtime.append(f"--target={target_triple}")
-                
-            subprocess.run(cmd_runtime, check=True)
-        
-        # --- Passo 2: Linkar (Failover de Linker) ---
-        linkers_to_try = []
-        if gcc: linkers_to_try.append(gcc) # Preferência: GCC (MinGW)
-        linkers_to_try.append(clang)       # Fallback: Clang
-        
-        success = False
-        last_error = None
+            if gcc:
+                try:
+                    gcc_version = subprocess.check_output([gcc, "-dumpmachine"], text=True).strip()
+                    if "x86_64" in gcc_version or "w64" in gcc_version:
+                        print(f"Detectado GCC 64-bit ({gcc_version}). Ajustando target para x86_64...")
+                        target_triple = "x86_64-pc-windows-gnu"
+                except:
+                    pass
 
-        for linker in linkers_to_try:
-            try:
-                print(f"Tentando linkar com {os.path.basename(linker)}...")
-                link_args = [linker, obj_file]
-                if os.path.exists(runtime_o):
-                    link_args.append(runtime_o)
-                link_args.extend(["-o", exe_file])
-                
-                # Se usar Clang como linker no Windows, força driver gnu
-                if linker == clang and "windows-gnu" in target_triple:
-                    link_args.append(f"--target={target_triple}")
+            # Passo 1: Compilar LLVM IR
+            cmd_compile = [clang, "-c", ir_file, "-o", obj_file, f"--target={target_triple}", "-Wno-override-module"]
+            subprocess.run(cmd_compile, check=True)
+            
+            # Passo 1.5: Compilar Runtime
+            if os.path.exists(runtime_c):
+                print(f"Compilando runtime...")
+                compiler_c = gcc if gcc else clang
+                cmd_runtime = [compiler_c, "-c", runtime_c, "-o", runtime_o]
+                if compiler_c == clang:
+                    cmd_runtime.append(f"--target={target_triple}")
+                subprocess.run(cmd_runtime, check=True)
+            
+            # Passo 2: Linkar
+            linkers_to_try = []
+            if gcc: linkers_to_try.append(gcc)
+            linkers_to_try.append(clang)
+            
+            success = False
+            last_error = None
+            for linker in linkers_to_try:
+                try:
+                    print(f"Tentando linkar com {os.path.basename(linker)}...")
+                    link_args = [linker, obj_file]
+                    if os.path.exists(runtime_o): link_args.append(runtime_o)
+                    link_args.extend(["-o", exe_file])
+                    if linker == clang and "windows-gnu" in target_triple:
+                        link_args.append(f"--target={target_triple}")
+                    subprocess.run(link_args, check=True)
+                    success = True
+                    break
+                except subprocess.CalledProcessError as e:
+                    last_error = e
+            if not success: raise last_error
 
-                subprocess.run(link_args, check=True)
-                success = True
-                break # Sucesso! Sai do loop
-            except subprocess.CalledProcessError as e:
-                print(f"Falha ao linkar com {os.path.basename(linker)}.")
-                last_error = e
-        
-        if success:
-            print(f"Executável gerado com sucesso: {exe_file}")
-            # Limpeza
-            if os.path.exists(obj_file): os.remove(obj_file)
-            if os.path.exists(runtime_o): os.remove(runtime_o)
+        # --- LÓGICA PARA LINUX/OUTROS (FALLBACK) ---
         else:
-            raise last_error
+            print(f"Detectado ambiente Linux/Unix ({current_os}). Usando compilação nativa.")
+            
+            # Passo 1: Compilar LLVM IR (Nativo)
+            # -fPIC é importante no Linux para código independente de posição
+            # -Wno-override-module ignora se o IR tiver target do Windows hardcoded
+            cmd_compile = [clang, "-c", ir_file, "-o", obj_file, "-fPIC", "-Wno-override-module"]
+            subprocess.run(cmd_compile, check=True)
+
+            # Passo 1.5: Compilar Runtime
+            if os.path.exists(runtime_c):
+                print(f"Compilando runtime...")
+                # Usa clang ou gcc, o que tiver
+                compiler_c = clang if clang else gcc
+                cmd_runtime = [compiler_c, "-c", runtime_c, "-o", runtime_o, "-fPIC"]
+                subprocess.run(cmd_runtime, check=True)
+
+            # Passo 2: Linkar
+            print(f"Linkando executável...")
+            linker = clang # Clang é ótimo linker no Linux
+            link_args = [linker, obj_file]
+            if os.path.exists(runtime_o): link_args.append(runtime_o)
+            link_args.extend(["-o", exe_file, "-lm"]) # -lm linka a biblioteca matemática (math.h)
+            
+            subprocess.run(link_args, check=True)
+
+        print(f"Executável gerado com sucesso: {exe_file}")
+        
+        # Limpeza
+        if os.path.exists(obj_file): os.remove(obj_file)
+        if os.path.exists(runtime_o): os.remove(runtime_o)
 
     except subprocess.CalledProcessError as e:
         print(f"\n[ERRO] Falha no processo de build.")
         print(f"Detalhes: {e}")
-        if os.name == 'nt':
+        if current_os == 'Windows':
             print("\nDicas para Windows:")
             print("1. Certifique-se de ter o MinGW instalado e no PATH.")
-            print("2. Se estiver usando apenas o Clang, instale o MinGW-w64.")
 
 if __name__ == '__main__':
     main(sys.argv)

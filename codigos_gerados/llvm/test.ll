@@ -28,8 +28,6 @@ declare i32 @"minilua_array_length"(i8* %".1")
 
 declare i8* @"minilua_get_data_ptr"(i8* %".1")
 
-declare void @"minilua_print_number"(double %".1")
-
 declare void @"minilua_check_index"(i32 %".1")
 
 define double @"add"(double %"a", double %"b")
@@ -59,10 +57,24 @@ entry:
   %".5" = call double @"add"(double %"x.1", double %"y.1")
   store double %".5", double* %"z"
   %"z.1" = load double, double* %"z"
-  call void @"minilua_print_number"(double %"z.1")
-  %".8" = bitcast [2 x i8]* @"nl_.1" to i8*
-  %".9" = call i32 (i8*, ...) @"printf"(i8* %".8")
+  %".7" = fptosi double %"z.1" to i64
+  %".8" = sitofp i64 %".7" to double
+  %"is_int" = fcmp oeq double %"z.1", %".8"
+  br i1 %"is_int", label %"print_int", label %"print_float"
+print_int:
+  %".10" = bitcast [5 x i8]* @"fmt_int_.1" to i8*
+  %".11" = call i32 (i8*, ...) @"printf"(i8* %".10", i64 %".7")
+  br label %"print_merge"
+print_float:
+  %".13" = bitcast [6 x i8]* @"fmt_flt_.2" to i8*
+  %".14" = call i32 (i8*, ...) @"printf"(i8* %".13", double %"z.1")
+  br label %"print_merge"
+print_merge:
+  %".16" = bitcast [2 x i8]* @"nl_.3" to i8*
+  %".17" = call i32 (i8*, ...) @"printf"(i8* %".16")
   ret i32 0
 }
 
-@"nl_.1" = internal constant [2 x i8] c"\0a\00"
+@"fmt_int_.1" = internal constant [5 x i8] c"%lld\00"
+@"fmt_flt_.2" = internal constant [6 x i8] c"%.14g\00"
+@"nl_.3" = internal constant [2 x i8] c"\0a\00"

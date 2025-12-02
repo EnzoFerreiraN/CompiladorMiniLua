@@ -69,10 +69,6 @@ class CodeGenerator(MiniLuaVisitor):
         get_data_ty = ir.FunctionType(voidptr_ty, [voidptr_ty])
         self.minilua_get_data_ptr = ir.Function(self.module, get_data_ty, name="minilua_get_data_ptr")
 
-        # void minilua_print_number(double n)
-        print_num_ty = ir.FunctionType(ir.VoidType(), [ir.DoubleType()])
-        self.minilua_print_number = ir.Function(self.module, print_num_ty, name="minilua_print_number")
-
         # void minilua_check_index(int index)
         check_idx_ty = ir.FunctionType(ir.VoidType(), [ir.IntType(32)])
         self.minilua_check_index = ir.Function(self.module, check_idx_ty, name="minilua_check_index")
@@ -104,6 +100,54 @@ class CodeGenerator(MiniLuaVisitor):
         gvar.global_constant = True
         gvar.initializer = c_str
         return self.builder.bitcast(gvar, ir.IntType(8).as_pointer())
+
+    def _emit_print_number(self, val):
+        # Verifica se é inteiro: (double)val == (double)(long long)val
+        int_val = self.builder.fptosi(val, ir.IntType(64))
+        rec_val = self.builder.sitofp(int_val, ir.DoubleType())
+        
+        # Compara com tolerância zero (exato)
+        is_int = self.builder.fcmp_ordered('==', val, rec_val, name="is_int")
+        
+        # Blocos
+        print_int_bb = self.func.append_basic_block(name="print_int")
+        print_float_bb = self.func.append_basic_block(name="print_float")
+        merge_bb = self.func.append_basic_block(name="print_merge")
+        
+        self.builder.cbranch(is_int, print_int_bb, print_float_bb)
+        
+        # Bloco Inteiro
+        self.builder.position_at_end(print_int_bb)
+        
+        # Format string %lld
+        fmt_int = "%lld\0"
+        c_fmt_int = ir.Constant(ir.ArrayType(ir.IntType(8), len(fmt_int)), bytearray(fmt_int.encode("utf8")))
+        global_fmt_int = ir.GlobalVariable(self.module, c_fmt_int.type, name=f"fmt_int_{self.module.get_unique_name()}")
+        global_fmt_int.linkage = 'internal'
+        global_fmt_int.global_constant = True
+        global_fmt_int.initializer = c_fmt_int
+        fmt_int_ptr = self.builder.bitcast(global_fmt_int, ir.IntType(8).as_pointer())
+        
+        self.builder.call(self.printf, [fmt_int_ptr, int_val])
+        self.builder.branch(merge_bb)
+        
+        # Bloco Float
+        self.builder.position_at_end(print_float_bb)
+        
+        # Format string %.14g
+        fmt_flt = "%.14g\0"
+        c_fmt_flt = ir.Constant(ir.ArrayType(ir.IntType(8), len(fmt_flt)), bytearray(fmt_flt.encode("utf8")))
+        global_fmt_flt = ir.GlobalVariable(self.module, c_fmt_flt.type, name=f"fmt_flt_{self.module.get_unique_name()}")
+        global_fmt_flt.linkage = 'internal'
+        global_fmt_flt.global_constant = True
+        global_fmt_flt.initializer = c_fmt_flt
+        fmt_flt_ptr = self.builder.bitcast(global_fmt_flt, ir.IntType(8).as_pointer())
+        
+        self.builder.call(self.printf, [fmt_flt_ptr, val])
+        self.builder.branch(merge_bb)
+        
+        # Merge
+        self.builder.position_at_end(merge_bb)
 
     def visitProgram(self, ctx):
         # program : function_decl* main_function EOF ;
@@ -453,7 +497,7 @@ class CodeGenerator(MiniLuaVisitor):
             
             for i, val in enumerate(args):
                 if val.type == ir.DoubleType():
-                    self.builder.call(self.minilua_print_number, [val])
+                    self._emit_print_number(val)
                     if i < len(args) - 1:
                         # Imprime espaço
                         sp = " \0"

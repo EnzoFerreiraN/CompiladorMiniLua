@@ -28,8 +28,6 @@ declare i32 @"minilua_array_length"(i8* %".1")
 
 declare i8* @"minilua_get_data_ptr"(i8* %".1")
 
-declare void @"minilua_print_number"(double %".1")
-
 declare void @"minilua_check_index"(i32 %".1")
 
 define i32 @"main"()
@@ -56,17 +54,41 @@ entry:
   %"n.1" = load double, double* %"n"
   %".18" = bitcast [4 x i8]* @"fmt_.9" to i8*
   %".19" = call i32 (i8*, ...) @"printf"(i8* %".18", i8* %".17")
-  call void @"minilua_print_number"(double %"n.1")
-  %".21" = bitcast [2 x i8]* @"nl_.10" to i8*
-  %".22" = call i32 (i8*, ...) @"printf"(i8* %".21")
-  %".23" = bitcast [11 x i8]* @"str_.11" to i8*
+  %".20" = fptosi double %"n.1" to i64
+  %".21" = sitofp i64 %".20" to double
+  %"is_int" = fcmp oeq double %"n.1", %".21"
+  br i1 %"is_int", label %"print_int", label %"print_float"
+print_int:
+  %".23" = bitcast [5 x i8]* @"fmt_int_.10" to i8*
+  %".24" = call i32 (i8*, ...) @"printf"(i8* %".23", i64 %".20")
+  br label %"print_merge"
+print_float:
+  %".26" = bitcast [6 x i8]* @"fmt_flt_.11" to i8*
+  %".27" = call i32 (i8*, ...) @"printf"(i8* %".26", double %"n.1")
+  br label %"print_merge"
+print_merge:
+  %".29" = bitcast [2 x i8]* @"nl_.12" to i8*
+  %".30" = call i32 (i8*, ...) @"printf"(i8* %".29")
+  %".31" = bitcast [11 x i8]* @"str_.13" to i8*
   %"n.2" = load double, double* %"n"
   %"multmp" = fmul double %"n.2", 0x4000000000000000
-  %".24" = bitcast [4 x i8]* @"fmt_.12" to i8*
-  %".25" = call i32 (i8*, ...) @"printf"(i8* %".24", i8* %".23")
-  call void @"minilua_print_number"(double %"multmp")
-  %".27" = bitcast [2 x i8]* @"nl_.13" to i8*
-  %".28" = call i32 (i8*, ...) @"printf"(i8* %".27")
+  %".32" = bitcast [4 x i8]* @"fmt_.14" to i8*
+  %".33" = call i32 (i8*, ...) @"printf"(i8* %".32", i8* %".31")
+  %".34" = fptosi double %"multmp" to i64
+  %".35" = sitofp i64 %".34" to double
+  %"is_int.1" = fcmp oeq double %"multmp", %".35"
+  br i1 %"is_int.1", label %"print_int.1", label %"print_float.1"
+print_int.1:
+  %".37" = bitcast [5 x i8]* @"fmt_int_.15" to i8*
+  %".38" = call i32 (i8*, ...) @"printf"(i8* %".37", i64 %".34")
+  br label %"print_merge.1"
+print_float.1:
+  %".40" = bitcast [6 x i8]* @"fmt_flt_.16" to i8*
+  %".41" = call i32 (i8*, ...) @"printf"(i8* %".40", double %"multmp")
+  br label %"print_merge.1"
+print_merge.1:
+  %".43" = bitcast [2 x i8]* @"nl_.17" to i8*
+  %".44" = call i32 (i8*, ...) @"printf"(i8* %".43")
   ret i32 0
 }
 
@@ -79,7 +101,11 @@ entry:
 @"fmt_in_num_.7" = internal constant [4 x i8] c"%lf\00"
 @"str_.8" = internal constant [14 x i8] c"Voce digitou:\00"
 @"fmt_.9" = internal constant [4 x i8] c"%s \00"
-@"nl_.10" = internal constant [2 x i8] c"\0a\00"
-@"str_.11" = internal constant [11 x i8] c"O dobro e:\00"
-@"fmt_.12" = internal constant [4 x i8] c"%s \00"
-@"nl_.13" = internal constant [2 x i8] c"\0a\00"
+@"fmt_int_.10" = internal constant [5 x i8] c"%lld\00"
+@"fmt_flt_.11" = internal constant [6 x i8] c"%.14g\00"
+@"nl_.12" = internal constant [2 x i8] c"\0a\00"
+@"str_.13" = internal constant [11 x i8] c"O dobro e:\00"
+@"fmt_.14" = internal constant [4 x i8] c"%s \00"
+@"fmt_int_.15" = internal constant [5 x i8] c"%lld\00"
+@"fmt_flt_.16" = internal constant [6 x i8] c"%.14g\00"
+@"nl_.17" = internal constant [2 x i8] c"\0a\00"

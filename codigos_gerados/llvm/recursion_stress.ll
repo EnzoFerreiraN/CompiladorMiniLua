@@ -28,8 +28,6 @@ declare i32 @"minilua_array_length"(i8* %".1")
 
 declare i8* @"minilua_get_data_ptr"(i8* %".1")
 
-declare void @"minilua_print_number"(double %".1")
-
 declare void @"minilua_check_index"(i32 %".1")
 
 define double @"ackermann"(double %"m", double %"n")
@@ -114,47 +112,107 @@ entry:
   %".8" = call double @"ackermann"(double              0x0, double              0x0)
   %".9" = bitcast [4 x i8]* @"fmt_.5" to i8*
   %".10" = call i32 (i8*, ...) @"printf"(i8* %".9", i8* %".7")
-  call void @"minilua_print_number"(double %".8")
-  %".12" = bitcast [2 x i8]* @"nl_.6" to i8*
-  %".13" = call i32 (i8*, ...) @"printf"(i8* %".12")
-  %".14" = bitcast [12 x i8]* @"str_.7" to i8*
-  %".15" = call double @"ackermann"(double 0x3ff0000000000000, double 0x4000000000000000)
-  %".16" = bitcast [4 x i8]* @"fmt_.8" to i8*
-  %".17" = call i32 (i8*, ...) @"printf"(i8* %".16", i8* %".14")
-  call void @"minilua_print_number"(double %".15")
-  %".19" = bitcast [2 x i8]* @"nl_.9" to i8*
-  %".20" = call i32 (i8*, ...) @"printf"(i8* %".19")
-  %".21" = bitcast [12 x i8]* @"str_.10" to i8*
-  %".22" = call double @"ackermann"(double 0x4000000000000000, double 0x4000000000000000)
-  %".23" = bitcast [4 x i8]* @"fmt_.11" to i8*
-  %".24" = call i32 (i8*, ...) @"printf"(i8* %".23", i8* %".21")
-  call void @"minilua_print_number"(double %".22")
-  %".26" = bitcast [2 x i8]* @"nl_.12" to i8*
-  %".27" = call i32 (i8*, ...) @"printf"(i8* %".26")
-  %".28" = bitcast [25 x i8]* @"str_.13" to i8*
-  %".29" = bitcast [3 x i8]* @"fmt_.14" to i8*
-  %".30" = call i32 (i8*, ...) @"printf"(i8* %".29", i8* %".28")
-  %".31" = bitcast [2 x i8]* @"nl_.15" to i8*
-  %".32" = call i32 (i8*, ...) @"printf"(i8* %".31")
-  %".33" = bitcast [12 x i8]* @"str_.16" to i8*
-  %".34" = call double @"ackermann"(double 0x4008000000000000, double 0x4000000000000000)
-  %".35" = bitcast [4 x i8]* @"fmt_.17" to i8*
-  %".36" = call i32 (i8*, ...) @"printf"(i8* %".35", i8* %".33")
-  call void @"minilua_print_number"(double %".34")
-  %".38" = bitcast [2 x i8]* @"nl_.18" to i8*
-  %".39" = call i32 (i8*, ...) @"printf"(i8* %".38")
-  %".40" = bitcast [26 x i8]* @"str_.19" to i8*
-  %".41" = bitcast [3 x i8]* @"fmt_.20" to i8*
-  %".42" = call i32 (i8*, ...) @"printf"(i8* %".41", i8* %".40")
-  %".43" = bitcast [2 x i8]* @"nl_.21" to i8*
-  %".44" = call i32 (i8*, ...) @"printf"(i8* %".43")
-  %".45" = bitcast [10 x i8]* @"str_.22" to i8*
-  %".46" = call double @"fib_recursive"(double 0x4024000000000000)
-  %".47" = bitcast [4 x i8]* @"fmt_.23" to i8*
-  %".48" = call i32 (i8*, ...) @"printf"(i8* %".47", i8* %".45")
-  call void @"minilua_print_number"(double %".46")
-  %".50" = bitcast [2 x i8]* @"nl_.24" to i8*
+  %".11" = fptosi double %".8" to i64
+  %".12" = sitofp i64 %".11" to double
+  %"is_int" = fcmp oeq double %".8", %".12"
+  br i1 %"is_int", label %"print_int", label %"print_float"
+print_int:
+  %".14" = bitcast [5 x i8]* @"fmt_int_.6" to i8*
+  %".15" = call i32 (i8*, ...) @"printf"(i8* %".14", i64 %".11")
+  br label %"print_merge"
+print_float:
+  %".17" = bitcast [6 x i8]* @"fmt_flt_.7" to i8*
+  %".18" = call i32 (i8*, ...) @"printf"(i8* %".17", double %".8")
+  br label %"print_merge"
+print_merge:
+  %".20" = bitcast [2 x i8]* @"nl_.8" to i8*
+  %".21" = call i32 (i8*, ...) @"printf"(i8* %".20")
+  %".22" = bitcast [12 x i8]* @"str_.9" to i8*
+  %".23" = call double @"ackermann"(double 0x3ff0000000000000, double 0x4000000000000000)
+  %".24" = bitcast [4 x i8]* @"fmt_.10" to i8*
+  %".25" = call i32 (i8*, ...) @"printf"(i8* %".24", i8* %".22")
+  %".26" = fptosi double %".23" to i64
+  %".27" = sitofp i64 %".26" to double
+  %"is_int.1" = fcmp oeq double %".23", %".27"
+  br i1 %"is_int.1", label %"print_int.1", label %"print_float.1"
+print_int.1:
+  %".29" = bitcast [5 x i8]* @"fmt_int_.11" to i8*
+  %".30" = call i32 (i8*, ...) @"printf"(i8* %".29", i64 %".26")
+  br label %"print_merge.1"
+print_float.1:
+  %".32" = bitcast [6 x i8]* @"fmt_flt_.12" to i8*
+  %".33" = call i32 (i8*, ...) @"printf"(i8* %".32", double %".23")
+  br label %"print_merge.1"
+print_merge.1:
+  %".35" = bitcast [2 x i8]* @"nl_.13" to i8*
+  %".36" = call i32 (i8*, ...) @"printf"(i8* %".35")
+  %".37" = bitcast [12 x i8]* @"str_.14" to i8*
+  %".38" = call double @"ackermann"(double 0x4000000000000000, double 0x4000000000000000)
+  %".39" = bitcast [4 x i8]* @"fmt_.15" to i8*
+  %".40" = call i32 (i8*, ...) @"printf"(i8* %".39", i8* %".37")
+  %".41" = fptosi double %".38" to i64
+  %".42" = sitofp i64 %".41" to double
+  %"is_int.2" = fcmp oeq double %".38", %".42"
+  br i1 %"is_int.2", label %"print_int.2", label %"print_float.2"
+print_int.2:
+  %".44" = bitcast [5 x i8]* @"fmt_int_.16" to i8*
+  %".45" = call i32 (i8*, ...) @"printf"(i8* %".44", i64 %".41")
+  br label %"print_merge.2"
+print_float.2:
+  %".47" = bitcast [6 x i8]* @"fmt_flt_.17" to i8*
+  %".48" = call i32 (i8*, ...) @"printf"(i8* %".47", double %".38")
+  br label %"print_merge.2"
+print_merge.2:
+  %".50" = bitcast [2 x i8]* @"nl_.18" to i8*
   %".51" = call i32 (i8*, ...) @"printf"(i8* %".50")
+  %".52" = bitcast [25 x i8]* @"str_.19" to i8*
+  %".53" = bitcast [3 x i8]* @"fmt_.20" to i8*
+  %".54" = call i32 (i8*, ...) @"printf"(i8* %".53", i8* %".52")
+  %".55" = bitcast [2 x i8]* @"nl_.21" to i8*
+  %".56" = call i32 (i8*, ...) @"printf"(i8* %".55")
+  %".57" = bitcast [12 x i8]* @"str_.22" to i8*
+  %".58" = call double @"ackermann"(double 0x4008000000000000, double 0x4000000000000000)
+  %".59" = bitcast [4 x i8]* @"fmt_.23" to i8*
+  %".60" = call i32 (i8*, ...) @"printf"(i8* %".59", i8* %".57")
+  %".61" = fptosi double %".58" to i64
+  %".62" = sitofp i64 %".61" to double
+  %"is_int.3" = fcmp oeq double %".58", %".62"
+  br i1 %"is_int.3", label %"print_int.3", label %"print_float.3"
+print_int.3:
+  %".64" = bitcast [5 x i8]* @"fmt_int_.24" to i8*
+  %".65" = call i32 (i8*, ...) @"printf"(i8* %".64", i64 %".61")
+  br label %"print_merge.3"
+print_float.3:
+  %".67" = bitcast [6 x i8]* @"fmt_flt_.25" to i8*
+  %".68" = call i32 (i8*, ...) @"printf"(i8* %".67", double %".58")
+  br label %"print_merge.3"
+print_merge.3:
+  %".70" = bitcast [2 x i8]* @"nl_.26" to i8*
+  %".71" = call i32 (i8*, ...) @"printf"(i8* %".70")
+  %".72" = bitcast [26 x i8]* @"str_.27" to i8*
+  %".73" = bitcast [3 x i8]* @"fmt_.28" to i8*
+  %".74" = call i32 (i8*, ...) @"printf"(i8* %".73", i8* %".72")
+  %".75" = bitcast [2 x i8]* @"nl_.29" to i8*
+  %".76" = call i32 (i8*, ...) @"printf"(i8* %".75")
+  %".77" = bitcast [10 x i8]* @"str_.30" to i8*
+  %".78" = call double @"fib_recursive"(double 0x4024000000000000)
+  %".79" = bitcast [4 x i8]* @"fmt_.31" to i8*
+  %".80" = call i32 (i8*, ...) @"printf"(i8* %".79", i8* %".77")
+  %".81" = fptosi double %".78" to i64
+  %".82" = sitofp i64 %".81" to double
+  %"is_int.4" = fcmp oeq double %".78", %".82"
+  br i1 %"is_int.4", label %"print_int.4", label %"print_float.4"
+print_int.4:
+  %".84" = bitcast [5 x i8]* @"fmt_int_.32" to i8*
+  %".85" = call i32 (i8*, ...) @"printf"(i8* %".84", i64 %".81")
+  br label %"print_merge.4"
+print_float.4:
+  %".87" = bitcast [6 x i8]* @"fmt_flt_.33" to i8*
+  %".88" = call i32 (i8*, ...) @"printf"(i8* %".87", double %".78")
+  br label %"print_merge.4"
+print_merge.4:
+  %".90" = bitcast [2 x i8]* @"nl_.34" to i8*
+  %".91" = call i32 (i8*, ...) @"printf"(i8* %".90")
   ret i32 0
 }
 
@@ -163,22 +221,32 @@ entry:
 @"nl_.3" = internal constant [2 x i8] c"\0a\00"
 @"str_.4" = internal constant [12 x i8] c"ack(0, 0) =\00"
 @"fmt_.5" = internal constant [4 x i8] c"%s \00"
-@"nl_.6" = internal constant [2 x i8] c"\0a\00"
-@"str_.7" = internal constant [12 x i8] c"ack(1, 2) =\00"
-@"fmt_.8" = internal constant [4 x i8] c"%s \00"
-@"nl_.9" = internal constant [2 x i8] c"\0a\00"
-@"str_.10" = internal constant [12 x i8] c"ack(2, 2) =\00"
-@"fmt_.11" = internal constant [4 x i8] c"%s \00"
-@"nl_.12" = internal constant [2 x i8] c"\0a\00"
-@"str_.13" = internal constant [25 x i8] c"Calculating ack(3, 2)...\00"
-@"fmt_.14" = internal constant [3 x i8] c"%s\00"
-@"nl_.15" = internal constant [2 x i8] c"\0a\00"
-@"str_.16" = internal constant [12 x i8] c"ack(3, 2) =\00"
-@"fmt_.17" = internal constant [4 x i8] c"%s \00"
+@"fmt_int_.6" = internal constant [5 x i8] c"%lld\00"
+@"fmt_flt_.7" = internal constant [6 x i8] c"%.14g\00"
+@"nl_.8" = internal constant [2 x i8] c"\0a\00"
+@"str_.9" = internal constant [12 x i8] c"ack(1, 2) =\00"
+@"fmt_.10" = internal constant [4 x i8] c"%s \00"
+@"fmt_int_.11" = internal constant [5 x i8] c"%lld\00"
+@"fmt_flt_.12" = internal constant [6 x i8] c"%.14g\00"
+@"nl_.13" = internal constant [2 x i8] c"\0a\00"
+@"str_.14" = internal constant [12 x i8] c"ack(2, 2) =\00"
+@"fmt_.15" = internal constant [4 x i8] c"%s \00"
+@"fmt_int_.16" = internal constant [5 x i8] c"%lld\00"
+@"fmt_flt_.17" = internal constant [6 x i8] c"%.14g\00"
 @"nl_.18" = internal constant [2 x i8] c"\0a\00"
-@"str_.19" = internal constant [26 x i8] c"Fibonacci Recursive Test:\00"
+@"str_.19" = internal constant [25 x i8] c"Calculating ack(3, 2)...\00"
 @"fmt_.20" = internal constant [3 x i8] c"%s\00"
 @"nl_.21" = internal constant [2 x i8] c"\0a\00"
-@"str_.22" = internal constant [10 x i8] c"fib(10) =\00"
+@"str_.22" = internal constant [12 x i8] c"ack(3, 2) =\00"
 @"fmt_.23" = internal constant [4 x i8] c"%s \00"
-@"nl_.24" = internal constant [2 x i8] c"\0a\00"
+@"fmt_int_.24" = internal constant [5 x i8] c"%lld\00"
+@"fmt_flt_.25" = internal constant [6 x i8] c"%.14g\00"
+@"nl_.26" = internal constant [2 x i8] c"\0a\00"
+@"str_.27" = internal constant [26 x i8] c"Fibonacci Recursive Test:\00"
+@"fmt_.28" = internal constant [3 x i8] c"%s\00"
+@"nl_.29" = internal constant [2 x i8] c"\0a\00"
+@"str_.30" = internal constant [10 x i8] c"fib(10) =\00"
+@"fmt_.31" = internal constant [4 x i8] c"%s \00"
+@"fmt_int_.32" = internal constant [5 x i8] c"%lld\00"
+@"fmt_flt_.33" = internal constant [6 x i8] c"%.14g\00"
+@"nl_.34" = internal constant [2 x i8] c"\0a\00"
