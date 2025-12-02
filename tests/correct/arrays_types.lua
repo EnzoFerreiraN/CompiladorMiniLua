@@ -1,15 +1,15 @@
 function void main()
     -- Teste de Arrays
     local arrInt : array<integer>;
-    arrInt[0] = 10;
-    arrInt[1] = 20;
-    print(arrInt[0]);
+    arrInt[1] = 10;
+    arrInt[2] = 20;
     print(arrInt[1]);
+    print(arrInt[2]);
 
     local arrStr : array<string>;
-    arrStr[0] = "Hello";
-    arrStr[1] = "World";
-    print(arrStr[0] .. " " .. arrStr[1]);
+    arrStr[1] = "Hello";
+    arrStr[2] = "World";
+    print(arrStr[1] .. " " .. arrStr[2]);
 
     -- Teste de len (string length)
     local s : string = "Tamanho";

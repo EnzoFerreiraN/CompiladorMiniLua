@@ -30,6 +30,8 @@ declare i8* @"minilua_get_data_ptr"(i8* %".1")
 
 declare void @"minilua_print_number"(double %".1")
 
+declare void @"minilua_check_index"(i32 %".1")
+
 define i32 @"main"()
 {
 entry:
@@ -44,71 +46,78 @@ entry:
   store i8* %".8", i8** %"arr"
   %"arr_ptr" = load i8*, i8** %"arr"
   %".10" = fptosi double 0x3ff0000000000000 to i32
+  call void @"minilua_check_index"(i32 %".10")
   %"idx_adj" = sub i32 %".10", 1
   call void @"minilua_ensure_capacity"(i8* %"arr_ptr", i32 %"idx_adj")
-  %".12" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr")
-  %".13" = bitcast i8* %".12" to double*
-  %"elem_ptr" = getelementptr double, double* %".13", i32 %"idx_adj"
+  %".13" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr")
+  %".14" = bitcast i8* %".13" to double*
+  %"elem_ptr" = getelementptr double, double* %".14", i32 %"idx_adj"
   store double 0x4050000000000000, double* %"elem_ptr"
   %"arr_ptr.1" = load i8*, i8** %"arr"
-  %".15" = fptosi double 0x4000000000000000 to i32
-  %"idx_adj.1" = sub i32 %".15", 1
+  %".16" = fptosi double 0x4000000000000000 to i32
+  call void @"minilua_check_index"(i32 %".16")
+  %"idx_adj.1" = sub i32 %".16", 1
   call void @"minilua_ensure_capacity"(i8* %"arr_ptr.1", i32 %"idx_adj.1")
-  %".17" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.1")
-  %".18" = bitcast i8* %".17" to double*
-  %"elem_ptr.1" = getelementptr double, double* %".18", i32 %"idx_adj.1"
+  %".19" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.1")
+  %".20" = bitcast i8* %".19" to double*
+  %"elem_ptr.1" = getelementptr double, double* %".20", i32 %"idx_adj.1"
   store double 0x4041000000000000, double* %"elem_ptr.1"
   %"arr_ptr.2" = load i8*, i8** %"arr"
-  %".20" = fptosi double 0x4008000000000000 to i32
-  %"idx_adj.2" = sub i32 %".20", 1
+  %".22" = fptosi double 0x4008000000000000 to i32
+  call void @"minilua_check_index"(i32 %".22")
+  %"idx_adj.2" = sub i32 %".22", 1
   call void @"minilua_ensure_capacity"(i8* %"arr_ptr.2", i32 %"idx_adj.2")
-  %".22" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.2")
-  %".23" = bitcast i8* %".22" to double*
-  %"elem_ptr.2" = getelementptr double, double* %".23", i32 %"idx_adj.2"
+  %".25" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.2")
+  %".26" = bitcast i8* %".25" to double*
+  %"elem_ptr.2" = getelementptr double, double* %".26", i32 %"idx_adj.2"
   store double 0x4039000000000000, double* %"elem_ptr.2"
   %"arr_ptr.3" = load i8*, i8** %"arr"
-  %".25" = fptosi double 0x4010000000000000 to i32
-  %"idx_adj.3" = sub i32 %".25", 1
+  %".28" = fptosi double 0x4010000000000000 to i32
+  call void @"minilua_check_index"(i32 %".28")
+  %"idx_adj.3" = sub i32 %".28", 1
   call void @"minilua_ensure_capacity"(i8* %"arr_ptr.3", i32 %"idx_adj.3")
-  %".27" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.3")
-  %".28" = bitcast i8* %".27" to double*
-  %"elem_ptr.3" = getelementptr double, double* %".28", i32 %"idx_adj.3"
+  %".31" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.3")
+  %".32" = bitcast i8* %".31" to double*
+  %"elem_ptr.3" = getelementptr double, double* %".32", i32 %"idx_adj.3"
   store double 0x4028000000000000, double* %"elem_ptr.3"
   %"arr_ptr.4" = load i8*, i8** %"arr"
-  %".30" = fptosi double 0x4014000000000000 to i32
-  %"idx_adj.4" = sub i32 %".30", 1
+  %".34" = fptosi double 0x4014000000000000 to i32
+  call void @"minilua_check_index"(i32 %".34")
+  %"idx_adj.4" = sub i32 %".34", 1
   call void @"minilua_ensure_capacity"(i8* %"arr_ptr.4", i32 %"idx_adj.4")
-  %".32" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.4")
-  %".33" = bitcast i8* %".32" to double*
-  %"elem_ptr.4" = getelementptr double, double* %".33", i32 %"idx_adj.4"
+  %".37" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.4")
+  %".38" = bitcast i8* %".37" to double*
+  %"elem_ptr.4" = getelementptr double, double* %".38", i32 %"idx_adj.4"
   store double 0x4036000000000000, double* %"elem_ptr.4"
   %"arr_ptr.5" = load i8*, i8** %"arr"
-  %".35" = fptosi double 0x4018000000000000 to i32
-  %"idx_adj.5" = sub i32 %".35", 1
+  %".40" = fptosi double 0x4018000000000000 to i32
+  call void @"minilua_check_index"(i32 %".40")
+  %"idx_adj.5" = sub i32 %".40", 1
   call void @"minilua_ensure_capacity"(i8* %"arr_ptr.5", i32 %"idx_adj.5")
-  %".37" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.5")
-  %".38" = bitcast i8* %".37" to double*
-  %"elem_ptr.5" = getelementptr double, double* %".38", i32 %"idx_adj.5"
+  %".43" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.5")
+  %".44" = bitcast i8* %".43" to double*
+  %"elem_ptr.5" = getelementptr double, double* %".44", i32 %"idx_adj.5"
   store double 0x4026000000000000, double* %"elem_ptr.5"
   %"arr_ptr.6" = load i8*, i8** %"arr"
-  %".40" = fptosi double 0x401c000000000000 to i32
-  %"idx_adj.6" = sub i32 %".40", 1
+  %".46" = fptosi double 0x401c000000000000 to i32
+  call void @"minilua_check_index"(i32 %".46")
+  %"idx_adj.6" = sub i32 %".46", 1
   call void @"minilua_ensure_capacity"(i8* %"arr_ptr.6", i32 %"idx_adj.6")
-  %".42" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.6")
-  %".43" = bitcast i8* %".42" to double*
-  %"elem_ptr.6" = getelementptr double, double* %".43", i32 %"idx_adj.6"
+  %".49" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.6")
+  %".50" = bitcast i8* %".49" to double*
+  %"elem_ptr.6" = getelementptr double, double* %".50", i32 %"idx_adj.6"
   store double 0x4056800000000000, double* %"elem_ptr.6"
   %"n" = alloca double
   store double              0x0, double* %"n"
   %"arr.1" = load i8*, i8** %"arr"
   %"arr_len" = call i32 @"minilua_array_length"(i8* %"arr.1")
-  %".46" = sitofp i32 %"arr_len" to double
-  store double %".46", double* %"n"
-  %".48" = bitcast [16 x i8]* @"str_.4" to i8*
-  %".49" = bitcast [3 x i8]* @"fmt_.5" to i8*
-  %".50" = call i32 (i8*, ...) @"printf"(i8* %".49", i8* %".48")
-  %".51" = bitcast [2 x i8]* @"nl_.6" to i8*
-  %".52" = call i32 (i8*, ...) @"printf"(i8* %".51")
+  %".53" = sitofp i32 %"arr_len" to double
+  store double %".53", double* %"n"
+  %".55" = bitcast [16 x i8]* @"str_.4" to i8*
+  %".56" = bitcast [3 x i8]* @"fmt_.5" to i8*
+  %".57" = call i32 (i8*, ...) @"printf"(i8* %".56", i8* %".55")
+  %".58" = bitcast [2 x i8]* @"nl_.6" to i8*
+  %".59" = call i32 (i8*, ...) @"printf"(i8* %".58")
   %"k" = alloca double
   store double 0x3ff0000000000000, double* %"k"
   br label %"while_cond"
@@ -120,15 +129,16 @@ while_cond:
 while_body:
   %"k.2" = load double, double* %"k"
   %"arr_ptr.7" = load i8*, i8** %"arr"
-  %".56" = fptosi double %"k.2" to i32
-  %"idx_adj.7" = sub i32 %".56", 1
-  %".57" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.7")
-  %".58" = bitcast i8* %".57" to double*
-  %"elem_ptr.7" = getelementptr double, double* %".58", i32 %"idx_adj.7"
+  %".63" = fptosi double %"k.2" to i32
+  call void @"minilua_check_index"(i32 %".63")
+  %"idx_adj.7" = sub i32 %".63", 1
+  %".65" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.7")
+  %".66" = bitcast i8* %".65" to double*
+  %"elem_ptr.7" = getelementptr double, double* %".66", i32 %"idx_adj.7"
   %"elem_val" = load double, double* %"elem_ptr.7"
   call void @"minilua_print_number"(double %"elem_val")
-  %".60" = bitcast [2 x i8]* @"nl_.7" to i8*
-  %".61" = call i32 (i8*, ...) @"printf"(i8* %".60")
+  %".68" = bitcast [2 x i8]* @"nl_.7" to i8*
+  %".69" = call i32 (i8*, ...) @"printf"(i8* %".68")
   %"k.3" = load double, double* %"k"
   %"addtmp" = fadd double %"k.3", 0x3ff0000000000000
   store double %"addtmp", double* %"k"
@@ -150,11 +160,11 @@ while_body.1:
   store double 0x3ff0000000000000, double* %"j"
   br label %"while_cond.2"
 while_merge.1:
-  %".102" = bitcast [16 x i8]* @"str_.8" to i8*
-  %".103" = bitcast [3 x i8]* @"fmt_.9" to i8*
-  %".104" = call i32 (i8*, ...) @"printf"(i8* %".103", i8* %".102")
-  %".105" = bitcast [2 x i8]* @"nl_.10" to i8*
-  %".106" = call i32 (i8*, ...) @"printf"(i8* %".105")
+  %".116" = bitcast [16 x i8]* @"str_.8" to i8*
+  %".117" = bitcast [3 x i8]* @"fmt_.9" to i8*
+  %".118" = call i32 (i8*, ...) @"printf"(i8* %".117", i8* %".116")
+  %".119" = bitcast [2 x i8]* @"nl_.10" to i8*
+  %".120" = call i32 (i8*, ...) @"printf"(i8* %".119")
   store double 0x3ff0000000000000, double* %"k"
   br label %"while_cond.3"
 while_cond.2:
@@ -167,20 +177,22 @@ while_cond.2:
 while_body.2:
   %"j.2" = load double, double* %"j"
   %"arr_ptr.8" = load i8*, i8** %"arr"
-  %".72" = fptosi double %"j.2" to i32
-  %"idx_adj.8" = sub i32 %".72", 1
-  %".73" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.8")
-  %".74" = bitcast i8* %".73" to double*
-  %"elem_ptr.8" = getelementptr double, double* %".74", i32 %"idx_adj.8"
+  %".80" = fptosi double %"j.2" to i32
+  call void @"minilua_check_index"(i32 %".80")
+  %"idx_adj.8" = sub i32 %".80", 1
+  %".82" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.8")
+  %".83" = bitcast i8* %".82" to double*
+  %"elem_ptr.8" = getelementptr double, double* %".83", i32 %"idx_adj.8"
   %"elem_val.1" = load double, double* %"elem_ptr.8"
   %"j.3" = load double, double* %"j"
   %"addtmp.1" = fadd double %"j.3", 0x3ff0000000000000
   %"arr_ptr.9" = load i8*, i8** %"arr"
-  %".75" = fptosi double %"addtmp.1" to i32
-  %"idx_adj.9" = sub i32 %".75", 1
-  %".76" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.9")
-  %".77" = bitcast i8* %".76" to double*
-  %"elem_ptr.9" = getelementptr double, double* %".77", i32 %"idx_adj.9"
+  %".84" = fptosi double %"addtmp.1" to i32
+  call void @"minilua_check_index"(i32 %".84")
+  %"idx_adj.9" = sub i32 %".84", 1
+  %".86" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.9")
+  %".87" = bitcast i8* %".86" to double*
+  %"elem_ptr.9" = getelementptr double, double* %".87", i32 %"idx_adj.9"
   %"elem_val.2" = load double, double* %"elem_ptr.9"
   %"gttmp" = fcmp ogt double %"elem_val.1", %"elem_val.2"
   br i1 %"gttmp", label %"then_0", label %"else_0"
@@ -197,41 +209,45 @@ if_merge:
 then_0:
   %"j.4" = load double, double* %"j"
   %"arr_ptr.10" = load i8*, i8** %"arr"
-  %".79" = fptosi double %"j.4" to i32
-  %"idx_adj.10" = sub i32 %".79", 1
-  %".80" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.10")
-  %".81" = bitcast i8* %".80" to double*
-  %"elem_ptr.10" = getelementptr double, double* %".81", i32 %"idx_adj.10"
+  %".89" = fptosi double %"j.4" to i32
+  call void @"minilua_check_index"(i32 %".89")
+  %"idx_adj.10" = sub i32 %".89", 1
+  %".91" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.10")
+  %".92" = bitcast i8* %".91" to double*
+  %"elem_ptr.10" = getelementptr double, double* %".92", i32 %"idx_adj.10"
   %"elem_val.3" = load double, double* %"elem_ptr.10"
   store double %"elem_val.3", double* %"temp"
   %"j.5" = load double, double* %"j"
   %"j.6" = load double, double* %"j"
   %"addtmp.2" = fadd double %"j.6", 0x3ff0000000000000
   %"arr_ptr.11" = load i8*, i8** %"arr"
-  %".83" = fptosi double %"addtmp.2" to i32
-  %"idx_adj.11" = sub i32 %".83", 1
-  %".84" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.11")
-  %".85" = bitcast i8* %".84" to double*
-  %"elem_ptr.11" = getelementptr double, double* %".85", i32 %"idx_adj.11"
+  %".94" = fptosi double %"addtmp.2" to i32
+  call void @"minilua_check_index"(i32 %".94")
+  %"idx_adj.11" = sub i32 %".94", 1
+  %".96" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.11")
+  %".97" = bitcast i8* %".96" to double*
+  %"elem_ptr.11" = getelementptr double, double* %".97", i32 %"idx_adj.11"
   %"elem_val.4" = load double, double* %"elem_ptr.11"
   %"arr_ptr.12" = load i8*, i8** %"arr"
-  %".86" = fptosi double %"j.5" to i32
-  %"idx_adj.12" = sub i32 %".86", 1
+  %".98" = fptosi double %"j.5" to i32
+  call void @"minilua_check_index"(i32 %".98")
+  %"idx_adj.12" = sub i32 %".98", 1
   call void @"minilua_ensure_capacity"(i8* %"arr_ptr.12", i32 %"idx_adj.12")
-  %".88" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.12")
-  %".89" = bitcast i8* %".88" to double*
-  %"elem_ptr.12" = getelementptr double, double* %".89", i32 %"idx_adj.12"
+  %".101" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.12")
+  %".102" = bitcast i8* %".101" to double*
+  %"elem_ptr.12" = getelementptr double, double* %".102", i32 %"idx_adj.12"
   store double %"elem_val.4", double* %"elem_ptr.12"
   %"j.7" = load double, double* %"j"
   %"addtmp.3" = fadd double %"j.7", 0x3ff0000000000000
   %"temp.1" = load double, double* %"temp"
   %"arr_ptr.13" = load i8*, i8** %"arr"
-  %".91" = fptosi double %"addtmp.3" to i32
-  %"idx_adj.13" = sub i32 %".91", 1
+  %".104" = fptosi double %"addtmp.3" to i32
+  call void @"minilua_check_index"(i32 %".104")
+  %"idx_adj.13" = sub i32 %".104", 1
   call void @"minilua_ensure_capacity"(i8* %"arr_ptr.13", i32 %"idx_adj.13")
-  %".93" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.13")
-  %".94" = bitcast i8* %".93" to double*
-  %"elem_ptr.13" = getelementptr double, double* %".94", i32 %"idx_adj.13"
+  %".107" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.13")
+  %".108" = bitcast i8* %".107" to double*
+  %"elem_ptr.13" = getelementptr double, double* %".108", i32 %"idx_adj.13"
   store double %"temp.1", double* %"elem_ptr.13"
   br label %"if_merge"
 else_0:
@@ -244,15 +260,16 @@ while_cond.3:
 while_body.3:
   %"k.5" = load double, double* %"k"
   %"arr_ptr.14" = load i8*, i8** %"arr"
-  %".110" = fptosi double %"k.5" to i32
-  %"idx_adj.14" = sub i32 %".110", 1
-  %".111" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.14")
-  %".112" = bitcast i8* %".111" to double*
-  %"elem_ptr.14" = getelementptr double, double* %".112", i32 %"idx_adj.14"
+  %".124" = fptosi double %"k.5" to i32
+  call void @"minilua_check_index"(i32 %".124")
+  %"idx_adj.14" = sub i32 %".124", 1
+  %".126" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.14")
+  %".127" = bitcast i8* %".126" to double*
+  %"elem_ptr.14" = getelementptr double, double* %".127", i32 %"idx_adj.14"
   %"elem_val.5" = load double, double* %"elem_ptr.14"
   call void @"minilua_print_number"(double %"elem_val.5")
-  %".114" = bitcast [2 x i8]* @"nl_.11" to i8*
-  %".115" = call i32 (i8*, ...) @"printf"(i8* %".114")
+  %".129" = bitcast [2 x i8]* @"nl_.11" to i8*
+  %".130" = call i32 (i8*, ...) @"printf"(i8* %".129")
   %"k.6" = load double, double* %"k"
   %"addtmp.6" = fadd double %"k.6", 0x3ff0000000000000
   store double %"addtmp.6", double* %"k"

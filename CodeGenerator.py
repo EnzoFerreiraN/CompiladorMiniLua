@@ -73,6 +73,10 @@ class CodeGenerator(MiniLuaVisitor):
         print_num_ty = ir.FunctionType(ir.VoidType(), [ir.DoubleType()])
         self.minilua_print_number = ir.Function(self.module, print_num_ty, name="minilua_print_number")
 
+        # void minilua_check_index(int index)
+        check_idx_ty = ir.FunctionType(ir.VoidType(), [ir.IntType(32)])
+        self.minilua_check_index = ir.Function(self.module, check_idx_ty, name="minilua_check_index")
+
     def _get_llvm_type(self, type_ctx):
         if type_ctx.TYPE_NUMBER() or type_ctx.TYPE_INTEGER():
             return ir.DoubleType()
@@ -319,6 +323,9 @@ class CodeGenerator(MiniLuaVisitor):
                 if index_val.type == ir.DoubleType():
                     index_val = self.builder.fptosi(index_val, ir.IntType(32))
                 
+                # Verifica limites (index >= 1)
+                self.builder.call(self.minilua_check_index, [index_val])
+
                 # Subtrai 1 para indexação baseada em 1
                 index_val = self.builder.sub(index_val, ir.Constant(ir.IntType(32), 1), name="idx_adj")
                 
@@ -730,7 +737,10 @@ class CodeGenerator(MiniLuaVisitor):
                     # Converte índice
                     if index_val.type == ir.DoubleType():
                         index_val = self.builder.fptosi(index_val, ir.IntType(32))
-                        
+                    
+                    # Verifica limites (index >= 1)
+                    self.builder.call(self.minilua_check_index, [index_val])
+
                     # Subtrai 1 para indexação baseada em 1
                     index_val = self.builder.sub(index_val, ir.Constant(ir.IntType(32), 1), name="idx_adj")
                         

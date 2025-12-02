@@ -30,6 +30,8 @@ declare i8* @"minilua_get_data_ptr"(i8* %".1")
 
 declare void @"minilua_print_number"(double %".1")
 
+declare void @"minilua_check_index"(i32 %".1")
+
 define i32 @"main"()
 {
 entry:
@@ -40,72 +42,77 @@ entry:
   %".5" = bitcast [6 x i8]* @"str_.1" to i8*
   %"arr_ptr" = load i8*, i8** %"arr"
   %".6" = fptosi double 0x3ff0000000000000 to i32
+  call void @"minilua_check_index"(i32 %".6")
   %"idx_adj" = sub i32 %".6", 1
   call void @"minilua_ensure_capacity"(i8* %"arr_ptr", i32 %"idx_adj")
-  %".8" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr")
-  %".9" = bitcast i8* %".8" to i8**
-  %"elem_ptr" = getelementptr i8*, i8** %".9", i32 %"idx_adj"
+  %".9" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr")
+  %".10" = bitcast i8* %".9" to i8**
+  %"elem_ptr" = getelementptr i8*, i8** %".10", i32 %"idx_adj"
   store i8* %".5", i8** %"elem_ptr"
-  %".11" = bitcast [6 x i8]* @"str_.2" to i8*
+  %".12" = bitcast [6 x i8]* @"str_.2" to i8*
   %"arr_ptr.1" = load i8*, i8** %"arr"
-  %".12" = fptosi double 0x4008000000000000 to i32
-  %"idx_adj.1" = sub i32 %".12", 1
+  %".13" = fptosi double 0x4008000000000000 to i32
+  call void @"minilua_check_index"(i32 %".13")
+  %"idx_adj.1" = sub i32 %".13", 1
   call void @"minilua_ensure_capacity"(i8* %"arr_ptr.1", i32 %"idx_adj.1")
-  %".14" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.1")
-  %".15" = bitcast i8* %".14" to i8**
-  %"elem_ptr.1" = getelementptr i8*, i8** %".15", i32 %"idx_adj.1"
-  store i8* %".11", i8** %"elem_ptr.1"
-  %".17" = bitcast [9 x i8]* @"str_.3" to i8*
+  %".16" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.1")
+  %".17" = bitcast i8* %".16" to i8**
+  %"elem_ptr.1" = getelementptr i8*, i8** %".17", i32 %"idx_adj.1"
+  store i8* %".12", i8** %"elem_ptr.1"
+  %".19" = bitcast [9 x i8]* @"str_.3" to i8*
   %"arr_ptr.2" = load i8*, i8** %"arr"
-  %".18" = fptosi double 0x3ff0000000000000 to i32
-  %"idx_adj.2" = sub i32 %".18", 1
-  %".19" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.2")
-  %".20" = bitcast i8* %".19" to i8**
-  %"elem_ptr.2" = getelementptr i8*, i8** %".20", i32 %"idx_adj.2"
+  %".20" = fptosi double 0x3ff0000000000000 to i32
+  call void @"minilua_check_index"(i32 %".20")
+  %"idx_adj.2" = sub i32 %".20", 1
+  %".22" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.2")
+  %".23" = bitcast i8* %".22" to i8**
+  %"elem_ptr.2" = getelementptr i8*, i8** %".23", i32 %"idx_adj.2"
   %"elem_val" = load i8*, i8** %"elem_ptr.2"
   %"is_null" = icmp eq i8* %"elem_val", null
-  %".21" = bitcast [1 x i8]* @"empty_string_const" to i8*
-  %"safe_str" = select  i1 %"is_null", i8* %".21", i8* %"elem_val"
-  %".22" = bitcast [4 x i8]* @"fmt_.4" to i8*
-  %".23" = call i32 (i8*, ...) @"printf"(i8* %".22", i8* %".17")
-  %".24" = bitcast [3 x i8]* @"fmt_.5" to i8*
-  %".25" = call i32 (i8*, ...) @"printf"(i8* %".24", i8* %"safe_str")
-  %".26" = bitcast [2 x i8]* @"nl_.6" to i8*
-  %".27" = call i32 (i8*, ...) @"printf"(i8* %".26")
-  %".28" = bitcast [18 x i8]* @"str_.7" to i8*
+  %".24" = bitcast [1 x i8]* @"empty_string_const" to i8*
+  %"safe_str" = select  i1 %"is_null", i8* %".24", i8* %"elem_val"
+  %".25" = bitcast [4 x i8]* @"fmt_.4" to i8*
+  %".26" = call i32 (i8*, ...) @"printf"(i8* %".25", i8* %".19")
+  %".27" = bitcast [3 x i8]* @"fmt_.5" to i8*
+  %".28" = call i32 (i8*, ...) @"printf"(i8* %".27", i8* %"safe_str")
+  %".29" = bitcast [2 x i8]* @"nl_.6" to i8*
+  %".30" = call i32 (i8*, ...) @"printf"(i8* %".29")
+  %".31" = bitcast [18 x i8]* @"str_.7" to i8*
   %"arr_ptr.3" = load i8*, i8** %"arr"
-  %".29" = fptosi double 0x4000000000000000 to i32
-  %"idx_adj.3" = sub i32 %".29", 1
-  %".30" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.3")
-  %".31" = bitcast i8* %".30" to i8**
-  %"elem_ptr.3" = getelementptr i8*, i8** %".31", i32 %"idx_adj.3"
+  %".32" = fptosi double 0x4000000000000000 to i32
+  call void @"minilua_check_index"(i32 %".32")
+  %"idx_adj.3" = sub i32 %".32", 1
+  %".34" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.3")
+  %".35" = bitcast i8* %".34" to i8**
+  %"elem_ptr.3" = getelementptr i8*, i8** %".35", i32 %"idx_adj.3"
   %"elem_val.1" = load i8*, i8** %"elem_ptr.3"
   %"is_null.1" = icmp eq i8* %"elem_val.1", null
-  %".32" = bitcast [1 x i8]* @"empty_string_const" to i8*
-  %"safe_str.1" = select  i1 %"is_null.1", i8* %".32", i8* %"elem_val.1"
-  %".33" = bitcast [4 x i8]* @"fmt_.8" to i8*
-  %".34" = call i32 (i8*, ...) @"printf"(i8* %".33", i8* %".28")
-  %".35" = bitcast [3 x i8]* @"fmt_.9" to i8*
-  %".36" = call i32 (i8*, ...) @"printf"(i8* %".35", i8* %"safe_str.1")
-  %".37" = bitcast [2 x i8]* @"nl_.10" to i8*
-  %".38" = call i32 (i8*, ...) @"printf"(i8* %".37")
-  %".39" = bitcast [9 x i8]* @"str_.11" to i8*
+  %".36" = bitcast [1 x i8]* @"empty_string_const" to i8*
+  %"safe_str.1" = select  i1 %"is_null.1", i8* %".36", i8* %"elem_val.1"
+  %".37" = bitcast [4 x i8]* @"fmt_.8" to i8*
+  %".38" = call i32 (i8*, ...) @"printf"(i8* %".37", i8* %".31")
+  %".39" = bitcast [3 x i8]* @"fmt_.9" to i8*
+  %".40" = call i32 (i8*, ...) @"printf"(i8* %".39", i8* %"safe_str.1")
+  %".41" = bitcast [2 x i8]* @"nl_.10" to i8*
+  %".42" = call i32 (i8*, ...) @"printf"(i8* %".41")
+  %".43" = bitcast [9 x i8]* @"str_.11" to i8*
   %"arr_ptr.4" = load i8*, i8** %"arr"
-  %".40" = fptosi double 0x4008000000000000 to i32
-  %"idx_adj.4" = sub i32 %".40", 1
-  %".41" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.4")
-  %".42" = bitcast i8* %".41" to i8**
-  %"elem_ptr.4" = getelementptr i8*, i8** %".42", i32 %"idx_adj.4"
+  %".44" = fptosi double 0x4008000000000000 to i32
+  call void @"minilua_check_index"(i32 %".44")
+  %"idx_adj.4" = sub i32 %".44", 1
+  %".46" = call i8* @"minilua_get_data_ptr"(i8* %"arr_ptr.4")
+  %".47" = bitcast i8* %".46" to i8**
+  %"elem_ptr.4" = getelementptr i8*, i8** %".47", i32 %"idx_adj.4"
   %"elem_val.2" = load i8*, i8** %"elem_ptr.4"
   %"is_null.2" = icmp eq i8* %"elem_val.2", null
-  %".43" = bitcast [1 x i8]* @"empty_string_const" to i8*
-  %"safe_str.2" = select  i1 %"is_null.2", i8* %".43", i8* %"elem_val.2"
-  %".44" = bitcast [4 x i8]* @"fmt_.12" to i8*
-  %".45" = call i32 (i8*, ...) @"printf"(i8* %".44", i8* %".39")
-  %".46" = bitcast [3 x i8]* @"fmt_.13" to i8*
-  %".47" = call i32 (i8*, ...) @"printf"(i8* %".46", i8* %"safe_str.2")
-  %".48" = bitcast [2 x i8]* @"nl_.14" to i8*
-  %".49" = call i32 (i8*, ...) @"printf"(i8* %".48")
+  %".48" = bitcast [1 x i8]* @"empty_string_const" to i8*
+  %"safe_str.2" = select  i1 %"is_null.2", i8* %".48", i8* %"elem_val.2"
+  %".49" = bitcast [4 x i8]* @"fmt_.12" to i8*
+  %".50" = call i32 (i8*, ...) @"printf"(i8* %".49", i8* %".43")
+  %".51" = bitcast [3 x i8]* @"fmt_.13" to i8*
+  %".52" = call i32 (i8*, ...) @"printf"(i8* %".51", i8* %"safe_str.2")
+  %".53" = bitcast [2 x i8]* @"nl_.14" to i8*
+  %".54" = call i32 (i8*, ...) @"printf"(i8* %".53")
   ret i32 0
 }
 

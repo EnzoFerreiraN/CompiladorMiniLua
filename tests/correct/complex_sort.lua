@@ -5,12 +5,12 @@ function void main()
     
     -- Initialize array in reverse order: 10, 9, ..., 1
     local i : integer;
-    for i = 0, size - 1 do
-        arr[i] = size - i;
+    for i = 1, size do
+        arr[i] = size - i + 1;
     end
     
     print("Before Sort:");
-    for i = 0, size - 1 do
+    for i = 1, size do
         print(arr[i]);
     end
     
@@ -19,9 +19,9 @@ function void main()
     local temp : integer;
     local swapped : boolean;
     
-    for i = 0, size - 1 do
+    for i = 1, size - 1 do
         swapped = false;
-        for j = 0, size - i - 2 do
+        for j = 1, size - i do
             if arr[j] > arr[j+1] then
                 -- Swap
                 temp = arr[j];
@@ -38,7 +38,7 @@ function void main()
     end
     
     print("After Sort:");
-    for i = 0, size - 1 do
+    for i = 1, size do
         print(arr[i]);
     end
 end

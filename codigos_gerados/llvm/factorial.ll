@@ -30,6 +30,8 @@ declare i8* @"minilua_get_data_ptr"(i8* %".1")
 
 declare void @"minilua_print_number"(double %".1")
 
+declare void @"minilua_check_index"(i32 %".1")
+
 define double @"factorial"(double %"n")
 {
 entry:
